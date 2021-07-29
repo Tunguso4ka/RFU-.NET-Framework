@@ -10,19 +10,15 @@
         mc:Ignorable="d"
         MouseLeftButtonDown="Window_MouseLeftButtonDown"
         Title="About RFUpdater" Height="200" Width="300">
-    
-    <Border BorderBrush="#7b2cbf" BorderThickness="3">
+
+    <Border BorderBrush="#10002b" BorderThickness="3">
         <Grid Background="#10002b">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
                 <TextBlock Style="{StaticResource GPTextBlockWhite}" Text="RFU" VerticalAlignment="Center" FontSize="24" Name="AppNameTextBlock"/>
                 <TextBlock Style="{StaticResource GPTextBlockWhite}" Text="by Kira Kosova" VerticalAlignment="Center" FontSize="8"/>
             </StackPanel>
             <Button Content="" x:Name="CloseBtn" Click="CloseBtn_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" ToolTipService.ToolTip="Close" VerticalAlignment="Top" HorizontalAlignment="Right"/>
-            <TextBox Name="AboutTextBox" Foreground="White" Background="#240046" IsReadOnly="True" BorderBrush="Transparent" Grid.Row="1"/>
+            <TextBox Name="AboutTextBox" Foreground="White" Background="#240046" IsReadOnly="True" BorderBrush="Transparent" Margin="0,30,0,0"/>
         </Grid>
     </Border>
 </Window>

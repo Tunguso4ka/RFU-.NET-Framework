@@ -5,13 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RFUpdater"
         WindowStartupLocation="CenterScreen"
+        
         WindowStyle="None"
         ResizeMode="NoResize"
         mc:Ignorable="d"
         MouseLeftButtonDown="Window_MouseLeftButtonDown"
-        Title="Loading..." Height="340" Width="300">
-    
-    <Border BorderBrush="#7b2cbf" BorderThickness="3">
+        Title="Loading..."
+        Topmost="True"
+        
+        Height="340" Width="300">
+
+    <Border BorderBrush="#10002b" BorderThickness="5">
         <StackPanel Background="#10002b">
             <ProgressBar IsIndeterminate="True" BorderBrush="Transparent" Background="Transparent" Foreground="AliceBlue" Height="10"/>
             <Image Source="/Resources/rfulogo0525.png" />

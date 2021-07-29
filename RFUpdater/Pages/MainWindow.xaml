@@ -16,32 +16,36 @@
         
         Title="RFUpdater" 
         
-        MinHeight="200" MinWidth="300"
-        Height="500" Width="600"
+        MinHeight="350" MinWidth="500"
+        Height="350" Width="500"
         >
     <WindowChrome.WindowChrome>
-        <WindowChrome NonClientFrameEdges="None" GlassFrameThickness="5" ResizeBorderThickness="5" CaptionHeight="0">
+        <WindowChrome NonClientFrameEdges="None" GlassFrameThickness="5" ResizeBorderThickness="5" CaptionHeight="5">
         </WindowChrome>
     </WindowChrome.WindowChrome>
-    <Border Name="WindowBorder" BorderBrush="#7b2cbf" BorderThickness="3">
+    <Border Name="WindowBorder" BorderBrush="#10002b" BorderThickness="5">
         <Grid>
-            <Grid Background="#10002b" Name="FirstGrid" VerticalAlignment="Top">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                    <Button Content="&#xEA8A;" Name="MenuBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" ToolTipService.ToolTip="Menu" Tag="Menu"/>
-                    <Button Content="" x:Name="SearchBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" ToolTipService.ToolTip="Search" Visibility="Collapsed" Tag="Search"/>
-                    <Button Content="" Name="LibraryBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" ToolTipService.ToolTip="Your games" Tag="Library"/>
-                    <Button Content="&#xF8B0;" Name="SettingsBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" ToolTipService.ToolTip="Settings" Tag="Settings"/>
-                    <Button Content="" x:Name="UserBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" ToolTipService.ToolTip="Authorize" Visibility="Collapsed" Tag="User"/>
-                </StackPanel>
+            <Grid Background="#10002b" Name="FirstGrid" VerticalAlignment="Top" Height="30">
+                <WrapPanel HorizontalAlignment="Left">
+                    <Button Content="&#xE0E2;" Name="BackBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Tag="Back" Width="30"/>
+                    <Button Name="MenuBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Tag="Menu">
+                        <Image Source="/Resources/rfulogo0525.png" Width="25"/>
+                    </Button>
+                    <Button Content="Store" Name="StoreBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" Width="70" Tag="Store"/>
+                    <Button Content="Library" Name="LibraryBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" Width="70" Tag="Library"/>
+                    <Button Content="Settings" Name="SettingsBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" Width="70" Tag="Settings"/>
+                </WrapPanel>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="" x:Name="MessagesBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" ToolTipService.ToolTip="Messages" Visibility="Collapsed" Tag="Messages"/>
-                    <Button Content="" x:Name="MinimBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" ToolTipService.ToolTip="Minimize" Tag="Minimize"/>
-                    <Button Content="" x:Name="MaximizeBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" ToolTipService.ToolTip="Maximize" Tag="Maximize"/>
-                    <Button Content="" x:Name="CloseBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" ToolTipService.ToolTip="Close" Tag="Close"/>
-                </StackPanel>
+                <WrapPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="UserBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Visibility="Collapsed" Tag="User">
+                        <Image Name="UserImage" Width="25"/>
+                    </Button>
+                    <Button Content="&#xE738;" x:Name="MinimBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Tag="Minimize"/>
+                    <Button Content="&#xE740;" x:Name="MaximizeBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Tag="Maximize"/>
+                    <Button Content="&#xE894;" x:Name="CloseBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Tag="Close"/>
+                </WrapPanel>
             </Grid>
-            <Grid Margin="0,25,0,0" Background="#240046" Name="SecondGrid">
+            <Grid Margin="0,30,0,0" Background="#240046" Name="SecondGrid">
                 <Frame Name="Frame0" NavigationUIVisibility="Hidden" Margin="5"/>
             </Grid>
             

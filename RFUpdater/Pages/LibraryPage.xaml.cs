@@ -14,111 +14,89 @@ namespace RFUpdater
     public partial class LibraryPage : Page
     {
         WebClient webClient = new WebClient();
-        public List<GameData> ListWithGameData = new List<GameData>();
+        public GamePage _GamePage;
+        public MainWindow _MainWindow;
+
         Uri GameListFileUri = new Uri("https://drive.google.com/uc?id=1QzOoLrQKW48salKmltEPDAis2Rd_GFz9", UriKind.RelativeOrAbsolute);
-        string GameListFilePath;
-        string[] GamesNamesList = new string[99];
-        string[] GamesPathesList = new string[99];
-        int[] GamesReleaseStatusList = new int[99];
 
+        //lists massives
+        public List<GameData> ListWithGameData = new List<GameData>();
+        GamesInfoClass[] gamesInfoClasses;
+
+        //ints
         public int _Tag;
-        public Version newGameVersion;
-        public Version thisGameVersion;
-        public string GameUpdateUrl;
-        public string GameInfoPath;
-        public string gamePath;
-        public string GameName;
-        public int AGameReleaseStatus;
 
-        public GamePage RandomFightsPage;
         Uri ImageSourceUri = new Uri("https://drive.google.com/uc?id=1pbvzQhhskJR8Vi-y-rC9AJ4iI1uylJ5g", UriKind.RelativeOrAbsolute); //RFU logo - https://drive.google.com/uc?id=1vm1sKGFaGSlJWCSaqyiMdR2z62FUTewn https://drive.google.com/file/d/1vm1sKGFaGSlJWCSaqyiMdR2z62FUTewn/view?usp=sharing gamelist - https://drive.google.com/uc?id=1QzOoLrQKW48salKmltEPDAis2Rd_GFz9 https://drive.google.com/uc?id=1Ia1E7q7Hpz-zihtBMxI8jDgGk5tXEk-X
-        public LibraryPage()
+        public LibraryPage(MainWindow mainWindow)
         {
             InitializeComponent();
-            GetGameListTxt();
+            gamesInfoClasses = mainWindow.GamesInfoClassList;
+            _MainWindow = mainWindow;
+            Check();
         }
 
-        void ChangeTheme()
+        void Check()
         {
-            
-        }
-
-        void GetGameListTxt()
-        {
-            GameListFilePath = Properties.Settings.Default.AppDataPath + "gamelist.txt";
             GoogleDiscGamesCheck();
-        }
-
-        void FolderGameCheck()
-        {
-            string[] Directories;
-            string[] DirectoryFilesNames;
-            Directories = Directory.GetDirectories(Properties.Settings.Default.AppDataPath + @"Games\");
-            if(Directories.Length > 0)
-            {
-                for(int i = 0; i != Directories.Length - 1; i++)
-                {
-                    DirectoryFilesNames = Directory.GetFiles(Properties.Settings.Default.AppDataPath + @"Games\" + Directories[i]);
-                    if(DirectoryFilesNames.Length > 0)
-                    {
-                        
-                    }
-                }
-            }
-            else
-            {
-                GoogleDiscGamesCheck();
-            }
         }
 
         async void GoogleDiscGamesCheck()
         {
             try
             {
+                string GameListFilePath = Properties.Settings.Default.AppDataPath + "gamelist.txt";
+
                 if (File.Exists(GameListFilePath))
                 {
                     File.Delete(GameListFilePath);
                 }
+
                 webClient.DownloadFile(GameListFileUri, GameListFilePath);
+
                 using (StreamReader StreamReader = new StreamReader(GameListFilePath))
                 {
                     int LineNum = 0;
                     string[] LineList;
                     string line;
-                    string _GameReleaseStatus;
-                    Brush _Brush;
+                    string _GameReleaseStatus = "";
+
                     while ((line = await StreamReader.ReadLineAsync()) != null)
                     {
+                        try
+                        {
+                            if (gamesInfoClasses[LineNum] == null)
+                            {
+                                gamesInfoClasses[LineNum] = new GamesInfoClass();
+                            }
+                        }
+                        catch
+                        {
+                            gamesInfoClasses[LineNum] = new GamesInfoClass();
+                        }
+
                         LineList = line.Split('}');
-                        GamesNamesList[LineNum] = LineList[0];
-                        GamesPathesList[LineNum] = LineList[2];
-                        //β
-                        if (LineList[3] == "0")
+                        if(gamesInfoClasses[LineNum].GameName == null)
                         {
-                            _GameReleaseStatus = "⏳";
-                            GamesReleaseStatusList[LineNum] = 0;
+                            gamesInfoClasses[LineNum].GameName = LineList[0];
                         }
-                        else if (LineList[3] == "1")
+                        gamesInfoClasses[LineNum].GamePictureUri = LineList[1];
+                        gamesInfoClasses[LineNum].InfoDriveLocationUri = LineList[2];
+                        gamesInfoClasses[LineNum].GameReleaseStatus = Convert.ToInt32(LineList[3]);
+
+                        switch(Convert.ToInt32(LineList[3]))
                         {
-                            _GameReleaseStatus = "β";
-                            GamesReleaseStatusList[LineNum] = 1;
-                        }   
-                        else
-                        {
-                            _GameReleaseStatus = "";
-                            GamesReleaseStatusList[LineNum] = 2;
+                            case 0:
+                                _GameReleaseStatus = "Soon";
+                                break;
+                            case 1:
+                                _GameReleaseStatus = "Beta";
+                                break;
+                            case 2:
+                                _GameReleaseStatus = "";
+                                break;
                         }
 
-                        if (Properties.Settings.Default.ThemeNum == 0)
-                        {
-                            _Brush = new SolidColorBrush(Color.FromRgb(97, 214, 200));
-                        }
-                        else
-                        {
-                            _Brush = new SolidColorBrush(Color.FromRgb(157, 78, 221));
-                        }
-
-                        ListWithGameData.Add(new GameData() { AGameName = LineList[0], IconSource = new Uri(LineList[1], UriKind.RelativeOrAbsolute), BtnTag = Convert.ToString(LineNum), GameReleaseStatus = _GameReleaseStatus, ReleaseStatusTextBlockBrush = _Brush });
+                        ListWithGameData.Add(new GameData() { AGameName = gamesInfoClasses[LineNum].GameName, IconSource = new Uri(LineList[1], UriKind.RelativeOrAbsolute), BtnTag = Convert.ToString(gamesInfoClasses[LineNum].Tag), GameReleaseStatus = _GameReleaseStatus });
                         LineNum++;
                     }
                     StreamReader.Dispose();
@@ -137,57 +115,37 @@ namespace RFUpdater
         {
             Button PressedButton = (Button)sender;
             _Tag = Convert.ToInt32((string)PressedButton.Tag);
-            GameInfoPath = Properties.Settings.Default.AppDataPath + "RFV.txt";
+
+            GamesInfoClass _GamesInfoClass = gamesInfoClasses[_Tag];
+
+            string GameInfoPath = Properties.Settings.Default.AppDataPath + "GameInfo.txt";
 
             try
             {
-                string[] _SavedGamesInfo = ((MainWindow)Window.GetWindow(this)).SavedGamesInfo[_Tag].Split('}');
+                if(_GamesInfoClass != null)
+                {
+                    webClient.DownloadFile(new Uri(_GamesInfoClass.InfoDriveLocationUri, UriKind.RelativeOrAbsolute), GameInfoPath);
 
-                thisGameVersion = new Version(_SavedGamesInfo[0]);
-                gamePath = _SavedGamesInfo[1];
+                    using (StreamReader StreamReader = new StreamReader(GameInfoPath))
+                    {
+                        gamesInfoClasses[_Tag].NewGameVersion = new Version(StreamReader.ReadLine());
+                        gamesInfoClasses[_Tag].GameDriveLocationUri = StreamReader.ReadLine();
+                        StreamReader.Dispose();
+                    }
+                    File.Delete(GameInfoPath);
+                }
+                else
+                {
+                    gamesInfoClasses[_Tag].NewGameVersion = new Version("0.0");
+                    gamesInfoClasses[_Tag].GameDriveLocationUri = "";
+                }
             }
             catch
             {
-                thisGameVersion = new Version("0.0");
-                gamePath = "";
+                //f
             }
-
-            if(GamesReleaseStatusList[_Tag] != 0)
-            {
-                webClient.DownloadFile(new Uri(GamesPathesList[_Tag], UriKind.RelativeOrAbsolute), GameInfoPath);
-
-                using (StreamReader StreamReader = new StreamReader(GameInfoPath))
-                {
-                    newGameVersion = new Version(StreamReader.ReadLine());
-                    GameUpdateUrl = StreamReader.ReadLine();
-                    StreamReader.Dispose();
-
-                    //MessageBox.Show(" 1: " + newGameVersion, GameUpdateUrl);
-                }
-                File.Delete(GameInfoPath);
-            }
-            else
-            {
-                newGameVersion = new Version("0.0");
-            }
-
-            if (Properties.Settings.Default.SavedGamesIsReal == false)
-            {
-                thisGameVersion = new Version("0.0");
-                gamePath = "";
-                MessageBox.Show("0");
-            }
-
-            GameName = GamesNamesList[_Tag];
-
-            AGameReleaseStatus = GamesReleaseStatusList[_Tag];
-
-            //https://filetransfer.io/data-package/hayIzLuP/download GamesPathesList[Tag]
-            //MessageBox.Show("" + Tag);
-            RandomFightsPage = new GamePage(this);
-            //string gameName, Version newGameVersion, !Version thisGameVersion, !string gamePath, string gameUpdateUrl
-            //MessageBox.Show(newGameVersion + "", "0");
-            ((MainWindow)Window.GetWindow(this)).Frame0.Navigate(RandomFightsPage);
+            _GamePage = new GamePage(_Tag, _MainWindow);
+            ((MainWindow)Window.GetWindow(this)).Frame0.Navigate(_GamePage);
 
         }
 

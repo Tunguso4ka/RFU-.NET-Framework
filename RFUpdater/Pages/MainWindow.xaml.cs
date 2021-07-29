@@ -9,6 +9,8 @@ using System.Windows.Media;
 using System.Reflection;
 using System.Diagnostics;
 using System.Windows.Controls;
+using System.Threading;
+using Microsoft.Win32;
 
 namespace RFUpdater
 {
@@ -17,14 +19,16 @@ namespace RFUpdater
     /// </summary>
     public partial class MainWindow : Window
     {
-        //Thread settingsThread = new Thread(() => { });
-
         Forms.NotifyIcon notifyIcon;
 
+        //strings
         string SettingsPath;
         string DownGamesPath;
         string RFUUpdateInfoUrl = @"https://drive.google.com/uc?export=download&id=1oKyTppE7V8E-Q0UF0_SXNmW3diQ0QbLJ";
         string RFUUpdateInfoPath;
+        const string UriScheme = "rfupdater";
+        const string FriendlyName = "RFUpdater Protocol";
+
         Version NewRFUVersion;
 
         //pages
@@ -35,11 +39,9 @@ namespace RFUpdater
         public UserPage AUserPage;
         public LoginPage ALoginPage;
 
+        public GamesInfoClass[] GamesInfoClassList = new GamesInfoClass[99];
 
-        //ints
-
-        //strings[]
-        public string[] SavedGamesInfo = new string[99];
+        public Thread AppThread;
 
         public MainWindow()
         {
@@ -63,6 +65,8 @@ namespace RFUpdater
             }
             Checks();
 
+            RegisterUriScheme();
+
             Frame0.Navigate(AStartPage);
         }
 
@@ -75,7 +79,7 @@ namespace RFUpdater
         {
             AStartPage = new StartPage();
             ASettingsPage = new SettingsPage();
-            ALibraryPage = new LibraryPage();
+            ALibraryPage = new LibraryPage(this);
             ASearchPage = new SearchPage();
             AUserPage = new UserPage();
             ALoginPage = new LoginPage();
@@ -98,28 +102,66 @@ namespace RFUpdater
             {
                 try
                 {
+                    GamesInfoClass gamesInfoClass;
+                    string[] BinaryReaderOutput;
+
                     BinaryReader BinaryReader = new BinaryReader(File.OpenRead(DownGamesPath));
+
                     int LineNum = 0;
                     while (BinaryReader.PeekChar() > -1)
                     {
-                        SavedGamesInfo[LineNum] = BinaryReader.ReadString();
+                        /*
+                         * GameName - 0
+                         * GamePictureUri - 1
+                         * InfoDriveLocationUri - 2
+                         * GameDriveLocationUri - 3
+                         * GamePCLocation - 4
+                         * CurrentGameVersion - 5
+                         * NewGameVersion - 6
+                         * GameStatus - 7
+                         * GameReleaseStatus - 8
+                         * Tag - 9
+                         */
+                        BinaryReaderOutput = BinaryReader.ReadString().Split(';');
+
+                        gamesInfoClass = new GamesInfoClass();
+                        gamesInfoClass.GameName = BinaryReaderOutput[0];
+                        gamesInfoClass.GamePictureUri = BinaryReaderOutput[1];
+
+                        gamesInfoClass.InfoDriveLocationUri = BinaryReaderOutput[2];
+                        gamesInfoClass.GameDriveLocationUri = BinaryReaderOutput[3];
+                        gamesInfoClass.GamePCLocation = BinaryReaderOutput[4];
+
+                        gamesInfoClass.CurrentGameVersion = new Version(BinaryReaderOutput[5]);
+                        gamesInfoClass.NewGameVersion = new Version(BinaryReaderOutput[6]);
+
+                        gamesInfoClass.GameStatus = Convert.ToInt32(BinaryReaderOutput[7]);
+                        gamesInfoClass.GameReleaseStatus = Convert.ToInt32(BinaryReaderOutput[8]);
+                        gamesInfoClass.Tag = Convert.ToInt32(BinaryReaderOutput[9]);
+
+                        GamesInfoClassList[LineNum] = gamesInfoClass;
                         LineNum++;
                     }
                     BinaryReader.Dispose();
 
-                    //MessageBox.Show(SavedGamesInfo[0]);
-
                     Properties.Settings.Default.SavedGamesIsReal = true;
+                    //MessageBox.Show("", "Yeap");
                 }
                 catch
                 {
                     Properties.Settings.Default.SavedGamesIsReal = false;
-                    MessageBox.Show(SavedGamesInfo[0], "Error");
+                    MessageBox.Show("", "Error SettingsSearch");
                 }
             }
             else
             {
                 Properties.Settings.Default.SavedGamesIsReal = false;
+                int i = 0;
+                while (i != 99)
+                {
+                    GamesInfoClassList[i] = new GamesInfoClass();
+                    i++;
+                }
             }
 
         }
@@ -164,7 +206,6 @@ namespace RFUpdater
             //Properties.Settings.Default.IsBetaOn
             if(Properties.Settings.Default.IsBetaOn == true)
             {
-                SearchBtn.Visibility = Visibility.Visible;
                 UserBtn.Visibility = Visibility.Visible;
             }
         }
@@ -186,9 +227,7 @@ namespace RFUpdater
                 SecondGrid.Background = new SolidColorBrush(Color.FromRgb(79, 168, 158));
 
                 MenuBtn.Style = (Style)FindResource("ButtonStyleGreen");
-                SearchBtn.Style = (Style)FindResource("ButtonStyleGreen");
                 LibraryBtn.Style = (Style)FindResource("ButtonStyleGreen");
-                SettingsBtn.Style = (Style)FindResource("ButtonStyleGreen");
                 UserBtn.Style = (Style)FindResource("ButtonStyleGreen");
                 MinimBtn.Style = (Style)FindResource("ButtonStyleGreen");
                 CloseBtn.Style = (Style)FindResource("ButtonStyleGreen");
@@ -235,13 +274,13 @@ namespace RFUpdater
                 if (this.WindowState == WindowState.Maximized)
                 {
                     this.WindowState = WindowState.Normal;
-                    ClickedButton.Content = "";
+                    ClickedButton.Content = "";
                 }
                 else
                 {
                     this.WindowStyle = WindowStyle.SingleBorderWindow;
                     this.WindowState = WindowState.Maximized;
-                    ClickedButton.Content = "";
+                    ClickedButton.Content = "";
                     this.WindowStyle = WindowStyle.None;
                 }
             }
@@ -260,13 +299,12 @@ namespace RFUpdater
                     Frame0.Navigate(ALoginPage);
                 }
             }
-            else if ((string)ClickedButton.Tag == "Search")
+            else if ((string)ClickedButton.Tag == "Back")
             {
-                Frame0.Navigate(ASearchPage);
-            }
-            else if ((string)ClickedButton.Tag == "Messages")
-            {
-                //Frame0.Navigate(MessagesPage);
+                if(Frame0.CanGoBack)
+                {
+                    Frame0.GoBack();
+                }
             }
         }
 
@@ -336,18 +374,33 @@ namespace RFUpdater
             {
                 this.WindowStyle = WindowStyle.SingleBorderWindow;
                 this.WindowState = WindowState.Maximized;
-                MaximizeBtn.Content = "";
+                MaximizeBtn.Content = "";
                 this.WindowStyle = WindowStyle.None;
             }
         }
 
-        /* 
-         public SettingsPage ASettingsPage;
-        public StartPage AStartPage;
-        public LibraryPage ALibraryPage;
-        public SearchPage ASearchPage;
-        public UserPage AUserPage;
-         */
+        public static void RegisterUriScheme()
+        {
+            using (var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Classes\\" + UriScheme))
+            {
+                // Replace typeof(App) by the class that contains the Main method or any class located in the project that produces the exe.
+                // or replace typeof(App).Assembly.Location by anything that gives the full path to the exe
+                string applicationLocation = typeof(App).Assembly.Location;
+
+                key.SetValue("", "URL:" + FriendlyName);
+                key.SetValue("URL Protocol", "");
+
+                using (var defaultIcon = key.CreateSubKey("DefaultIcon"))
+                {
+                    defaultIcon.SetValue("", applicationLocation + ",1");
+                }
+
+                using (var commandKey = key.CreateSubKey(@"shell\open\command"))
+                {
+                    commandKey.SetValue("", "\"" + applicationLocation + "\" \"%1\"");
+                }
+            }
+        }
 
         [STAThread]
         private void NotifyIconClicked(object sender, Forms.MouseEventArgs e)
@@ -375,7 +428,8 @@ namespace RFUpdater
         private void ExitClicked(object sender, EventArgs e)
         {
             notifyIcon.Dispose();
-            Application.Current.Dispatcher.Invoke(Application.Current.Shutdown);
+            this.Close();
+            Application.Current.Shutdown();
         }
 
         public void KillNotifyIcon()

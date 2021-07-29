@@ -15,17 +15,14 @@ namespace RFUpdater
     /// </summary>
     public partial class GamePage : Page
     {
-        string GameName;
-        Version NewGameVersion;
-        Version ThisGameVersion;
-        string FolderPath;
-        string GamePath;
+        public MainWindow _MainWindow;
+
         string ZipPath;
-        string GameUpdateUri;
         string SettingsPath = Properties.Settings.Default.AppDataPath + "gamesonthispc.dat";
-        int GameStatus;
-        int _Tag;
+
         int ThisUserLikeNum = 0;
+        int GameStatus;
+
         bool GameIsComingSoon;
 
         ProgressBar _ProgressBar;
@@ -33,45 +30,39 @@ namespace RFUpdater
 
         DirectoryInfo FolderPathDirectory;
 
-        public GamePage(LibraryPage _LibraryPage)
+        GamesInfoClass _GamesInfoClass;
+
+        public GamePage(int _Tag, MainWindow mainWindow)
         {
             InitializeComponent();
 
-            //
-            GameName = _LibraryPage.GameName;
-            GameNameTextBlock.Text = GameName;
-
-            NewGameVersion = _LibraryPage.newGameVersion;
-            ThisGameVersion = _LibraryPage.thisGameVersion;
-
-            GamePath = _LibraryPage.gamePath;
-            GameUpdateUri = _LibraryPage.GameUpdateUrl;
-            _Tag = _LibraryPage._Tag;
+            _GamesInfoClass = mainWindow.GamesInfoClassList[_Tag];
+            _MainWindow = mainWindow;
 
             //MessageBox.Show(NewGameVersion + "", "0");
 
-            if (_LibraryPage.AGameReleaseStatus == 0)
+            if (_GamesInfoClass.GameReleaseStatus == 0)
             {
-                GameReleaseStatusTextBlock.Text = "⏳\nComing soon...";
+                GameReleaseStatusTextBlock.Text = "Soon";
                 InstallBtn.IsEnabled = false;
                 GameIsComingSoon = true;
             }
-            else if (_LibraryPage.AGameReleaseStatus == 1)
+            else if (_GamesInfoClass.GameReleaseStatus == 1)
             {
-                GameReleaseStatusTextBlock.Text = "β";
+                GameReleaseStatusTextBlock.Text = "Beta";
             }
             else
             {
                 GameReleaseStatusTextBlock.Text = "";
             }
 
-            if (ThisGameVersion == new Version("0.0"))
+            if (_GamesInfoClass.CurrentGameVersion == null)
             {
                 GameStatus = -2;
             }
             else
             {
-                switch (NewGameVersion.CompareTo(ThisGameVersion))
+                switch (_GamesInfoClass.NewGameVersion.CompareTo(_GamesInfoClass.CurrentGameVersion))
                 {
                     case 0:
                         GameStatus = 0; //такая же
@@ -87,37 +78,38 @@ namespace RFUpdater
 
             //новая и текущая версия вносятся в текстблоки
             if (GameIsComingSoon == false) {
-                VersionTextBlock.Text = "This version: " + ThisGameVersion;
+                VersionTextBlock.Text = "This version: " + _GamesInfoClass.CurrentGameVersion;
             }
-            if (!NewGameVersion.Equals(ThisGameVersion))
+            if (!_GamesInfoClass.NewGameVersion.Equals(_GamesInfoClass.CurrentGameVersion))
             {
-                VersionTextBlock.Text += " New version: " + NewGameVersion;
+                VersionTextBlock.Text += " New version: " + _GamesInfoClass.NewGameVersion;
             }
 
-            FolderPath = Properties.Settings.Default.SaveFolderPath + GameName;
-            FolderPath = FolderPath.Replace(' ', '_');
+            if(_GamesInfoClass.GamePCLocation == null)
+            {
+                _GamesInfoClass.GamePCLocation = Properties.Settings.Default.SaveFolderPath + _GamesInfoClass.GameName;
+                _GamesInfoClass.GamePCLocation = _GamesInfoClass.GamePCLocation.Replace(' ', '_');
+            }
+
             ProgressBar0.Visibility = Visibility.Hidden;
             DownSpeedTextBlock.Visibility = Visibility.Hidden;
 
             if (GameStatus == -2)
             {
                 StatusTextBlock.Text = "Status: Not installed.";
-                InstallBtn.Content = "⬇💾Install";
-                InstallBtn.ToolTip = "Install";
+                InstallBtn.Content = "Install";
                 DeleteBtn.Visibility = Visibility.Hidden;
             }
             else if (GameStatus == 1)
             {
                 StatusTextBlock.Text = "Status: Update found.";
-                InstallBtn.Content = "🆕Update";
-                InstallBtn.ToolTip = "Update";
+                InstallBtn.Content = "Update";
                 DeleteBtn.Visibility = Visibility.Visible;
             }
             else
             {
                 StatusTextBlock.Text = "Status: Installed.";
-                InstallBtn.Content = "🎮Play";
-                InstallBtn.ToolTip = "Play";
+                InstallBtn.Content = "Play";
                 DeleteBtn.Visibility = Visibility.Visible;
             }
 
@@ -146,7 +138,7 @@ namespace RFUpdater
         {
             try
             {
-                string WhatsNewPath = FolderPath + @"\WhatsNew.txt";
+                string WhatsNewPath = _GamesInfoClass.GamePCLocation + @"\WhatsNew.txt";
                 if (GameStatus != 0 && File.Exists(WhatsNewPath))
                 {
                     StreamReader _StreamReader = new StreamReader(WhatsNewPath);
@@ -173,9 +165,9 @@ namespace RFUpdater
                 }
                 else if (GameStatus == 0)
                 {
-                    if (File.Exists(GamePath))
+                    if (File.Exists(_GamesInfoClass.GamePCLocation + @"\" + _GamesInfoClass.GameName + ".exe"))
                     {
-                        Process.Start(GamePath);
+                        Process.Start(_GamesInfoClass.GamePCLocation + @"\" + _GamesInfoClass.GameName + ".exe");
                     }
                     else
                     {
@@ -188,11 +180,23 @@ namespace RFUpdater
                     Installing();
                 }
             }
+            else if ((string)_Button.Tag == "Play")
+            {
+                if (File.Exists(_GamesInfoClass.GamePCLocation + @"\" + _GamesInfoClass.GameName + ".exe"))
+                {
+                    Process.Start(_GamesInfoClass.GamePCLocation + @"\" + _GamesInfoClass.GameName + ".exe");
+                }
+                else
+                {
+                    DeleteGame();
+                    MessageBox.Show(_GamesInfoClass.GamePCLocation + @"\" + _GamesInfoClass.GameName, "Error, Play");
+                }
+            }
             else if ((string)_Button.Tag == "Delete")
             {
-                if (Directory.Exists(FolderPath))
+                if (Directory.Exists(_GamesInfoClass.GamePCLocation))
                 {
-                    Directory.Delete(FolderPath, true);
+                    Directory.Delete(_GamesInfoClass.GamePCLocation, true);
                 }
                 DeleteGame();
             }
@@ -234,18 +238,18 @@ namespace RFUpdater
             Properties.Settings.Default.Installing = true;
             WebClient WebClient = new WebClient();
 
-            if (Directory.Exists(FolderPath))
+            if (Directory.Exists(_GamesInfoClass.GamePCLocation))
             {
-                Directory.Delete(FolderPath, true);
-                Directory.CreateDirectory(FolderPath);
+                Directory.Delete(_GamesInfoClass.GamePCLocation, true);
+                Directory.CreateDirectory(_GamesInfoClass.GamePCLocation);
             }
             else
             {
-                Directory.CreateDirectory(FolderPath);
+                Directory.CreateDirectory(_GamesInfoClass.GamePCLocation);
             }
 
-            ZipPath = FolderPath + @"\RandomFights.zip";
-            GamePath = FolderPath + @"\RandomFights.exe";
+            ZipPath = _GamesInfoClass.GamePCLocation + @"\" + _GamesInfoClass.GameName + ".zip";
+            string GamePath = _GamesInfoClass.GamePCLocation + @"\" + _GamesInfoClass.GameName + ".exe";
 
             if(File.Exists(ZipPath))
             {
@@ -257,7 +261,7 @@ namespace RFUpdater
                 File.Delete(GamePath);
             }
 
-            Uri UpdateUri = new Uri(GameUpdateUri);
+            Uri UpdateUri = new Uri(_GamesInfoClass.GameDriveLocationUri);
             WebClient.DownloadFileCompleted += new AsyncCompletedEventHandler(Completed);
             WebClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(ProgressChanged);
             WebClient.DownloadFileAsync(UpdateUri, ZipPath);
@@ -290,34 +294,94 @@ namespace RFUpdater
                     MessageBox.Show("Complete");
                     GameStatus = 0;
                     StatusTextBlock.Text = "Status: Installed.";
-                    InstallBtn.Content = "🎮Play";
+                    InstallBtn.Content = "Play";
+                    InstallBtn.Tag = "Play";
 
-                    ZipFile.ExtractToDirectory(ZipPath, FolderPath);
+                    ZipFile.ExtractToDirectory(ZipPath, _GamesInfoClass.GamePCLocation);
                     File.Delete(ZipPath);
 
                     BinaryWriter BinaryWriter = new BinaryWriter(File.Open(SettingsPath, FileMode.Create));
                     int i = 0;
                     while (i != 99)
                     {
-                        if (i == _Tag)
+                        /*
+                         * GameName - 0
+                         * GamePictureUri - 1
+                         * InfoDriveLocationUri - 2
+                         * GameDriveLocationUri - 3
+                         * GamePCLocation - 4
+                         * CurrentGameVersion - 5
+                         * NewGameVersion - 6
+                         * GameStatus - 7
+                         * GameReleaseStatus - 8
+                         * Tag - 9
+                         */
+
+                        if (i == _GamesInfoClass.Tag)
                         {
-                            BinaryWriter.Write(NewGameVersion + "}" + GamePath);
+                            BinaryWriter.Write(
+                                _GamesInfoClass.GameName + ";" + //0
+                                _GamesInfoClass.GamePictureUri + ";" + //1
+                                _GamesInfoClass.InfoDriveLocationUri + ";" + //2
+                                _GamesInfoClass.GameDriveLocationUri + ";" + //3
+                                _GamesInfoClass.GamePCLocation + ";" + //4
+                                _GamesInfoClass.CurrentGameVersion + ";" + //5
+                                _GamesInfoClass.NewGameVersion + ";" + //6
+                                _GamesInfoClass.GameStatus + ";" + //7
+                                _GamesInfoClass.GameReleaseStatus + ";" + //8
+                                _GamesInfoClass.Tag //9
+                                );
+
+                            _MainWindow.GamesInfoClassList[i] = _GamesInfoClass;
                         }
                         else
                         {
-                            string[] _SavedGamesInfo = ((MainWindow)Window.GetWindow(this)).SavedGamesInfo[i].Split('}');
-                            BinaryWriter.Write(_SavedGamesInfo[0] + "}" + _SavedGamesInfo[1]); //Version}Path
+                            GamesInfoClass NotUpdatedGamesInfoClass = _MainWindow.GamesInfoClassList[i];
+                            if (NotUpdatedGamesInfoClass == null)
+                            {
+                                NotUpdatedGamesInfoClass = new GamesInfoClass();
+                            }
+                            if (NotUpdatedGamesInfoClass.GameName == null)
+                            {
+                                BinaryWriter.Write(
+                                    null + ";" + //0
+                                    null + ";" + //1
+                                    null + ";" + //2
+                                    null + ";" + //3
+                                    null + ";" + //4
+                                    null + ";" + //5
+                                    null + ";" + //6
+                                    null + ";" + //7
+                                    null + ";" + //8
+                                    null //9
+                                    );
+                            }
+                            else
+                            {
+                                BinaryWriter.Write(
+                                NotUpdatedGamesInfoClass.GameName + ";" + //0
+                                NotUpdatedGamesInfoClass.GamePictureUri + ";" + //1
+                                NotUpdatedGamesInfoClass.InfoDriveLocationUri + ";" + //2
+                                NotUpdatedGamesInfoClass.GameDriveLocationUri + ";" + //3
+                                NotUpdatedGamesInfoClass.GamePCLocation + ";" + //4
+                                NotUpdatedGamesInfoClass.CurrentGameVersion + ";" + //5
+                                NotUpdatedGamesInfoClass.NewGameVersion + ";" + //6
+                                NotUpdatedGamesInfoClass.GameStatus + ";" + //7
+                                NotUpdatedGamesInfoClass.GameReleaseStatus + ";" + //8
+                                NotUpdatedGamesInfoClass.Tag //9
+                                );
+                            }
+                            _MainWindow.GamesInfoClassList[i] = NotUpdatedGamesInfoClass;
                         }
                         i++;
                     }
 
-                    if (!Directory.Exists(Properties.Settings.Default.AppDataPath + @"Games\" + GameName))
+                    if (!Directory.Exists(Properties.Settings.Default.AppDataPath + @"Games\" + _GamesInfoClass.GameName))
                     {
-                        Directory.CreateDirectory(Properties.Settings.Default.AppDataPath + @"Games\" + GameName);
-                        Directory.CreateDirectory(Properties.Settings.Default.AppDataPath + @"Games\" + GameName + @"\Screenshots\");
+                        Directory.CreateDirectory(Properties.Settings.Default.AppDataPath + @"Games\" + _GamesInfoClass.GameName);
+                        Directory.CreateDirectory(Properties.Settings.Default.AppDataPath + @"Games\" + _GamesInfoClass.GameName + @"\Screenshots\");
                     }
 
-                    //MessageBox.Show(((MainWindow)Window.GetWindow(this)).SavedGamesVersions[0] + "}" + ((MainWindow)Window.GetWindow(this)).SavedGamesPaths[0]);
                     BinaryWriter.Dispose();
                 }
                 catch
@@ -340,21 +404,68 @@ namespace RFUpdater
         {
             GameStatus = -2;
             StatusTextBlock.Text = "Status: Not installed.";
-            InstallBtn.Content = "⬇💾Install";
+            InstallBtn.Content = "Install";
+            InstallBtn.Tag = "Install";
             DeleteBtn.Visibility = Visibility.Hidden;
 
             BinaryWriter BinaryWriter = new BinaryWriter(File.Open(SettingsPath, FileMode.Create));
             int i = 0;
             while (i != 99)
             {
-                if (i == _Tag)
+                if (i == _GamesInfoClass.Tag)
                 {
-                    BinaryWriter.Write("" + "}" + "");
+                    BinaryWriter.Write(
+                        null + ";" + //0
+                        null + ";" + //1
+                        null + ";" + //2
+                        null + ";" + //3
+                        null + ";" + //4
+                        null + ";" + //5
+                        null + ";" + //6
+                        null + ";" + //7
+                        null + ";" + //8
+                        null //9
+                        );
+
+                    _MainWindow.GamesInfoClassList[i] = _GamesInfoClass;
                 }
                 else
                 {
-                    string[] _SavedGamesInfo = ((MainWindow)Window.GetWindow(this)).SavedGamesInfo[i].Split('}');
-                    BinaryWriter.Write(_SavedGamesInfo[0] + "}" + _SavedGamesInfo[1]); //Version}Path
+                    GamesInfoClass NotUpdatedGamesInfoClass = _MainWindow.GamesInfoClassList[i];
+                    if (NotUpdatedGamesInfoClass == null)
+                    {
+                        NotUpdatedGamesInfoClass = new GamesInfoClass();
+                    }
+                    if (NotUpdatedGamesInfoClass.GameName == null)
+                    {
+                        BinaryWriter.Write(
+                            null + ";" + //0
+                            null + ";" + //1
+                            null + ";" + //2
+                            null + ";" + //3
+                            null + ";" + //4
+                            null + ";" + //5
+                            null + ";" + //6
+                            null + ";" + //7
+                            null + ";" + //8
+                            null //9
+                            );
+                    }
+                    else
+                    {
+                        BinaryWriter.Write(
+                        NotUpdatedGamesInfoClass.GameName + ";" + //0
+                        NotUpdatedGamesInfoClass.GamePictureUri + ";" + //1
+                        NotUpdatedGamesInfoClass.InfoDriveLocationUri + ";" + //2
+                        NotUpdatedGamesInfoClass.GameDriveLocationUri + ";" + //3
+                        NotUpdatedGamesInfoClass.GamePCLocation + ";" + //4
+                        NotUpdatedGamesInfoClass.CurrentGameVersion + ";" + //5
+                        NotUpdatedGamesInfoClass.NewGameVersion + ";" + //6
+                        NotUpdatedGamesInfoClass.GameStatus + ";" + //7
+                        NotUpdatedGamesInfoClass.GameReleaseStatus + ";" + //8
+                        NotUpdatedGamesInfoClass.Tag //9
+                        );
+                    }
                 }
                 i++;
             }

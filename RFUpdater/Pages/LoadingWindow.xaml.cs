@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
+using System.Windows.Interop;
 
 namespace RFUpdater
 {
@@ -10,35 +11,34 @@ namespace RFUpdater
     /// </summary>
     public partial class LoadingWindow : Window
     {
-        MediaPlayer _MediaPlayer;
+        [DllImportAttribute("User32.dll")]
+        private static extern IntPtr FindWindow(String ClassName, String WindowName);
 
-        string MusicPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\RFUpdater\Resources\streetphenomena.mp3";
+        [DllImportAttribute("User32.dll")]
+        private static extern IntPtr SetForegroundWindow(IntPtr hWnd);
 
         public LoadingWindow()
         {
             InitializeComponent();
 
-            _MediaPlayer = new MediaPlayer();
-
-            try
+            //поиск окна по заголовку
+            IntPtr hWnd = FindWindow(null, "RFUpdater");
+            if (hWnd.ToInt32() > 0)
             {
-                _MediaPlayer.Open(new Uri(MusicPath, UriKind.Relative));
-                SongControl(0);
+                SetForegroundWindow(hWnd);
+                this.Close();
             }
-            catch
+            else
             {
-
+                OpenMainWindow();
             }
-
-            OpenMainWindow();
         }
 
-        void OpenMainWindow()
+
+        public void OpenMainWindow()
         {
             MainWindow _MainWindow = new MainWindow();
             _MainWindow.Show();
-
-            SongControl(1);
             this.Close();
         }
 
@@ -47,16 +47,5 @@ namespace RFUpdater
             DragMove();
         }
 
-        void SongControl(int i)
-        {
-            if(i == 0)
-            {
-                _MediaPlayer.Play();
-            }
-            else if (i == 1)
-            {
-                _MediaPlayer.Stop();
-            }
-        }
     }
 }

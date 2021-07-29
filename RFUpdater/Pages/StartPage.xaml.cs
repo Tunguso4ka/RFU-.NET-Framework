@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace RFUpdater
@@ -8,21 +10,31 @@ namespace RFUpdater
     /// </summary>
     public partial class StartPage : Page
     {
+        public List<NewsList> ListWithNewsData = new List<NewsList>();
+
         public StartPage()
         {
             InitializeComponent();
-            /*if(DateTime.Now.Hour <= 12)
-            {
-                GDTextBlock.Text = Properties.Resources.HelloMessageTimeMorning;
-            }
-            else if (DateTime.Now.Hour <= 19)
-            {
-                GDTextBlock.Text = Properties.Resources.HelloMessageTimeAfternoon;
-            }
-            else
-            {
-                GDTextBlock.Text = Properties.Resources.HelloMessageTimeEvening;
-            }*/
+            CreateTestNews();
         }
+
+        void CreateTestNews()
+        {
+            ListWithNewsData.Add(new NewsList() { NewsText = "Welcome to RFUpdater.\nThere you can download and update games. Thanks for using!", IconSource = new Uri("https://drive.google.com/uc?id=1snwcZsH8Mu4nucVT4PqWI18F9UenlhdL", UriKind.RelativeOrAbsolute), BtnTag = Convert.ToString(0) });
+            NewsItemsControl.ItemsSource = ListWithNewsData;
+            //https://drive.google.com/file/d/1snwcZsH8Mu4nucVT4PqWI18F9UenlhdL/view?usp=sharing
+        }
+
+        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+
+        }
+    }
+
+    public class NewsList
+    {
+        public string NewsText { get; set; }
+        public Uri IconSource { get; set; }
+        public string BtnTag { get; set; }
     }
 }
