@@ -182,9 +182,11 @@ namespace RFUpdater
             }
             else if ((string)_Button.Tag == "Play")
             {
-                if (File.Exists(_GamesInfoClass.GamePCLocation + @"\" + _GamesInfoClass.GameName + ".exe"))
+                string StartupPath = _GamesInfoClass.GamePCLocation + @"\" + _GamesInfoClass.GameName + ".exe";
+                StartupPath = StartupPath.Replace(" ", "");
+                if (File.Exists(StartupPath))
                 {
-                    Process.Start(_GamesInfoClass.GamePCLocation + @"\" + _GamesInfoClass.GameName + ".exe");
+                    Process.Start(StartupPath);
                 }
                 else
                 {
