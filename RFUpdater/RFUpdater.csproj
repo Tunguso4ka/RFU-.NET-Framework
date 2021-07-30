@@ -28,8 +28,8 @@
     <TargetCulture>en</TargetCulture>
     <ProductName>RFU</ProductName>
     <PublisherName>Kira Kosova</PublisherName>
-    <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>0.2.0.%2a</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>0.2.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -208,6 +208,8 @@
     <Resource Include="Materials\IBMPlexSans-Light.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Materials\Poppins-ExtraBold.ttf" />
+    <Resource Include="Materials\Poppins-Regular.ttf" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -230,19 +232,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\favicon %282%29.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\RFULogoPurple.ico" />
-  </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Resource Include="Resources\rfulogo0516.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\rfulogo0516ico.ico" />
-  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\rfulogo0525.png" />
     <Resource Include="Resources\rfulogo0525ico.ico" />

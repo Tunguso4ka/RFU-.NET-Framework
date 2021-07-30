@@ -122,6 +122,7 @@ namespace RFUpdater
                          * GameReleaseStatus - 8
                          * Tag - 9
                          */
+
                         BinaryReaderOutput = BinaryReader.ReadString().Split(';');
 
                         gamesInfoClass = new GamesInfoClass();
@@ -132,14 +133,23 @@ namespace RFUpdater
                         gamesInfoClass.GameDriveLocationUri = BinaryReaderOutput[3];
                         gamesInfoClass.GamePCLocation = BinaryReaderOutput[4];
 
-                        gamesInfoClass.CurrentGameVersion = new Version(BinaryReaderOutput[5]);
-                        gamesInfoClass.NewGameVersion = new Version(BinaryReaderOutput[6]);
+                        try { gamesInfoClass.CurrentGameVersion = new Version(BinaryReaderOutput[5]); }
+                        catch { gamesInfoClass.CurrentGameVersion = null; }
 
-                        gamesInfoClass.GameStatus = Convert.ToInt32(BinaryReaderOutput[7]);
-                        gamesInfoClass.GameReleaseStatus = Convert.ToInt32(BinaryReaderOutput[8]);
-                        gamesInfoClass.Tag = Convert.ToInt32(BinaryReaderOutput[9]);
+                        try { gamesInfoClass.NewGameVersion = new Version(BinaryReaderOutput[6]); }
+                        catch { gamesInfoClass.NewGameVersion = null; }
+
+                        try { gamesInfoClass.GameStatus = Convert.ToInt32(BinaryReaderOutput[7]); }
+                        catch { gamesInfoClass.GameStatus = 0; }
+
+                        try { gamesInfoClass.GameReleaseStatus = Convert.ToInt32(BinaryReaderOutput[8]); }
+                        catch { gamesInfoClass.GameReleaseStatus = 0; }
+
+                        try { gamesInfoClass.Tag = Convert.ToInt32(BinaryReaderOutput[9]); }
+                        catch { gamesInfoClass.Tag = LineNum; }
 
                         GamesInfoClassList[LineNum] = gamesInfoClass;
+
                         LineNum++;
                     }
                     BinaryReader.Dispose();
@@ -151,6 +161,12 @@ namespace RFUpdater
                 {
                     Properties.Settings.Default.SavedGamesIsReal = false;
                     MessageBox.Show("", "Error SettingsSearch");
+                    int i = 0;
+                    while (i != 99)
+                    {
+                        GamesInfoClassList[i] = new GamesInfoClass();
+                        i++;
+                    }
                 }
             }
             else
@@ -247,10 +263,20 @@ namespace RFUpdater
             if((string)ClickedButton.Tag == "Settings")
             {
                 Frame0.Navigate(ASettingsPage);
+                LibraryBtn.Background = Brushes.Transparent;
+                SettingsBtn.Background = new SolidColorBrush(Color.FromRgb(36, 00, 70));
+                StoreBtn.Background = Brushes.Transparent;
+                MenuBtn.Background = Brushes.Transparent;
             }
             else if ((string)ClickedButton.Tag == "Library")
             {
+                ALibraryPage.Check();
                 Frame0.Navigate(ALibraryPage);
+
+                LibraryBtn.Background = new SolidColorBrush(Color.FromRgb(36,00,70));
+                SettingsBtn.Background = Brushes.Transparent;
+                StoreBtn.Background = Brushes.Transparent;
+                MenuBtn.Background = Brushes.Transparent;
             }
             else if ((string)ClickedButton.Tag == "Close")
             {
@@ -274,19 +300,23 @@ namespace RFUpdater
                 if (this.WindowState == WindowState.Maximized)
                 {
                     this.WindowState = WindowState.Normal;
-                    ClickedButton.Content = "";
+                    ClickedButton.Content = "";
                 }
                 else
                 {
                     this.WindowStyle = WindowStyle.SingleBorderWindow;
                     this.WindowState = WindowState.Maximized;
-                    ClickedButton.Content = "";
+                    ClickedButton.Content = "";
                     this.WindowStyle = WindowStyle.None;
                 }
             }
             else if ((string)ClickedButton.Tag == "Menu")
             {
                 Frame0.Navigate(AStartPage);
+                LibraryBtn.Background = Brushes.Transparent;
+                SettingsBtn.Background = Brushes.Transparent;
+                StoreBtn.Background = Brushes.Transparent;
+                MenuBtn.Background = new SolidColorBrush(Color.FromRgb(36, 00, 70));
             }
             else if ((string)ClickedButton.Tag == "User")
             {
@@ -312,7 +342,6 @@ namespace RFUpdater
         {
 
             notifyIcon = new Forms.NotifyIcon(new Container());
-            ///*
             Forms.ContextMenuStrip _ContextMenuStrip = new Forms.ContextMenuStrip();
 
             Forms.ToolStripMenuItem _StripMenuItemAppName = new Forms.ToolStripMenuItem();
@@ -322,7 +351,8 @@ namespace RFUpdater
                 {
                     _StripMenuItemAppName,
                     new Forms.ToolStripMenuItem("Main page", null, new EventHandler(StartPageClicked)),
-                    new Forms.ToolStripMenuItem("Game library", null, new EventHandler(LibraryPageClicked)),
+                    new Forms.ToolStripMenuItem("Store", null, new EventHandler(LibraryPageClicked)),
+                    new Forms.ToolStripMenuItem("Library", null, new EventHandler(LibraryPageClicked)),
                     new Forms.ToolStripMenuItem("Exit", null, new EventHandler(ExitClicked))
                 }
             );
@@ -335,35 +365,6 @@ namespace RFUpdater
             notifyIcon.ContextMenuStrip = _ContextMenuStrip;
             notifyIcon.Text = "RFUpdater";
             notifyIcon.Visible = true;
-            //*/
-            
-            /*
-            Forms.ContextMenu _ContextMenu = new Forms.ContextMenu();
-
-            Forms.MenuItem _MenuItemAppName = new Forms.MenuItem();
-
-            _ContextMenu.MenuItems.AddRange(
-                new Forms.MenuItem[]
-                {
-                    _MenuItemAppName,
-                    new Forms.MenuItem("-"),
-                    new Forms.MenuItem("Main page", new EventHandler(StartPageClicked)),
-                    new Forms.MenuItem("Game library", new EventHandler(LibraryPageClicked)),
-                    new Forms.MenuItem("-"),
-                    new Forms.MenuItem("Exit", new EventHandler(ExitClicked))
-                }
-            );
-
-            _MenuItemAppName.Text = "RFUpdater";
-            _MenuItemAppName.Enabled = false;
-
-            notifyIcon.Icon = Properties.Resources.rfuball_XtN_icon;
-            notifyIcon.ContextMenu = _ContextMenu;
-            notifyIcon.Text = "RFUpdater";
-            notifyIcon.Visible = true;
-
-            */
-
             notifyIcon.MouseDown += new Forms.MouseEventHandler(NotifyIconClicked);
             
         }
@@ -374,7 +375,7 @@ namespace RFUpdater
             {
                 this.WindowStyle = WindowStyle.SingleBorderWindow;
                 this.WindowState = WindowState.Maximized;
-                MaximizeBtn.Content = "";
+                MaximizeBtn.Content = "";
                 this.WindowStyle = WindowStyle.None;
             }
         }
@@ -427,7 +428,7 @@ namespace RFUpdater
 
         private void ExitClicked(object sender, EventArgs e)
         {
-            notifyIcon.Dispose();
+            KillNotifyIcon();
             this.Close();
             Application.Current.Shutdown();
         }

@@ -20,7 +20,14 @@ namespace RFUpdater
 
         void CreateTestNews()
         {
-            ListWithNewsData.Add(new NewsList() { NewsText = "Welcome to RFUpdater.\nThere you can download and update games. Thanks for using!", IconSource = new Uri("https://drive.google.com/uc?id=1snwcZsH8Mu4nucVT4PqWI18F9UenlhdL", UriKind.RelativeOrAbsolute), BtnTag = Convert.ToString(0) });
+            ListWithNewsData.Add(
+                new NewsList() 
+                { 
+                    NewsText = "Welcome to RFUpdater.\nThere you can download and update games.\nThere can be a many bugs, but im trying to fix it.\nThanks for using!", 
+                    IconSource = new Uri("https://drive.google.com/uc?id=1snwcZsH8Mu4nucVT4PqWI18F9UenlhdL", UriKind.RelativeOrAbsolute), 
+                    BtnTag = Convert.ToString(0) 
+                }
+                );
             NewsItemsControl.ItemsSource = ListWithNewsData;
             //https://drive.google.com/file/d/1snwcZsH8Mu4nucVT4PqWI18F9UenlhdL/view?usp=sharing
         }

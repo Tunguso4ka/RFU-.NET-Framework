@@ -5,14 +5,14 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:RFUpdater"
       mc:Ignorable="d"
-      d:DesignHeight="340" d:DesignWidth="400"
+      d:DesignHeight="350" d:DesignWidth="500"
       Title="GamePage">
 
     <StackPanel>
         
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
             <TextBlock Text="A" Name="GameReleaseStatusTextBlock" Foreground="#9d4edd" FontSize="16" VerticalAlignment="Center" Margin="5,0"/>
-            <TextBlock Text="GameName" Name="GameNameTextBlock" FontSize="36" Style="{StaticResource GPTextBlockWhite}" FontFamily="/RFUpdater;component/Materials/#IBM Plex Sans Light" Background="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}"/>
+            <TextBlock Text="[there should be game name but there a bug]" Name="GameNameTextBlock" FontSize="36" Style="{StaticResource GPTextBlockWhite}" FontFamily="/RFUpdater;component/Materials/#Poppins ExtraBold" Background="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}"/>
         </StackPanel>
         
         <StackPanel>

@@ -35,7 +35,7 @@ namespace RFUpdater
             Check();
         }
 
-        void Check()
+        public void Check()
         {
             GoogleDiscGamesCheck();
         }
@@ -44,6 +44,8 @@ namespace RFUpdater
         {
             try
             {
+                ListWithGameData.Clear();
+
                 string GameListFilePath = Properties.Settings.Default.AppDataPath + "gamelist.txt";
 
                 if (File.Exists(GameListFilePath))
@@ -79,6 +81,11 @@ namespace RFUpdater
                         {
                             gamesInfoClasses[LineNum].GameName = LineList[0];
                         }
+                        if (gamesInfoClasses[LineNum].GameName != LineList[0])
+                        {
+                            gamesInfoClasses[LineNum].GameName = LineList[0];
+                        }
+
                         gamesInfoClasses[LineNum].GamePictureUri = LineList[1];
                         gamesInfoClasses[LineNum].InfoDriveLocationUri = LineList[2];
                         gamesInfoClasses[LineNum].GameReleaseStatus = Convert.ToInt32(LineList[3]);
@@ -144,6 +151,9 @@ namespace RFUpdater
             {
                 //f
             }
+
+            _MainWindow.GamesInfoClassList[_Tag] = gamesInfoClasses[_Tag];
+
             _GamePage = new GamePage(_Tag, _MainWindow);
             ((MainWindow)Window.GetWindow(this)).Frame0.Navigate(_GamePage);
 
@@ -165,6 +175,16 @@ namespace RFUpdater
 
             ListWithGameData.Add(new GameData() { AGameName = "Test game", IconSource = new Uri("https://drive.google.com/uc?id=1NkVH1Zf7WpGQrpI4r5nBz0ZHqsC97BVX", UriKind.RelativeOrAbsolute), BtnTag = Convert.ToString(LineNum), GameReleaseStatus = "T", ReleaseStatusTextBlockBrush = _Brush });
             GameItemsControl.ItemsSource = ListWithGameData;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Button ClickedButton = (Button)sender;
+            if ((string)ClickedButton.Tag == "Reload")
+            {
+                Check();
+            }
+
         }
     }
 

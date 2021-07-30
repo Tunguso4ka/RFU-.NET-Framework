@@ -23,26 +23,26 @@
         <WindowChrome NonClientFrameEdges="None" GlassFrameThickness="5" ResizeBorderThickness="5" CaptionHeight="5">
         </WindowChrome>
     </WindowChrome.WindowChrome>
-    <Border Name="WindowBorder" BorderBrush="#10002b" BorderThickness="5">
+    <Border Name="WindowBorder" BorderBrush="#10002b" BorderThickness="6">
         <Grid>
             <Grid Background="#10002b" Name="FirstGrid" VerticalAlignment="Top" Height="30">
                 <WrapPanel HorizontalAlignment="Left">
-                    <Button Content="&#xE0E2;" Name="BackBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Tag="Back" Width="30"/>
+                    <Button Content="&#xE973;" Name="BackBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Tag="Back" Width="20"/>
                     <Button Name="MenuBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Tag="Menu">
                         <Image Source="/Resources/rfulogo0525.png" Width="25"/>
                     </Button>
-                    <Button Content="Store" Name="StoreBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" Width="70" Tag="Store"/>
-                    <Button Content="Library" Name="LibraryBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" Width="70" Tag="Library"/>
-                    <Button Content="Settings" Name="SettingsBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" Width="70" Tag="Settings"/>
+                    <Button Content="Store" Name="StoreBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" Width="80" Tag="Store"/>
+                    <Button Content="Library" Name="LibraryBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" Width="80" Tag="Library"/>
+                    <Button Content="Settings" Name="SettingsBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" Width="80" Tag="Settings"/>
                 </WrapPanel>
 
                 <WrapPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button x:Name="UserBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Visibility="Collapsed" Tag="User">
                         <Image Name="UserImage" Width="25"/>
                     </Button>
-                    <Button Content="&#xE738;" x:Name="MinimBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Tag="Minimize"/>
-                    <Button Content="&#xE740;" x:Name="MaximizeBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Tag="Maximize"/>
-                    <Button Content="&#xE894;" x:Name="CloseBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Tag="Close"/>
+                    <Button Content="&#xE921;" x:Name="MinimBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Tag="Minimize"/>
+                    <Button Content="&#xE922;" x:Name="MaximizeBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Tag="Maximize"/>
+                    <Button Content="&#xE8BB;" x:Name="CloseBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Tag="Close"/>
                 </WrapPanel>
             </Grid>
             <Grid Margin="0,30,0,0" Background="#240046" Name="SecondGrid">

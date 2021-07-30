@@ -39,7 +39,7 @@ namespace RFUpdater
             _GamesInfoClass = mainWindow.GamesInfoClassList[_Tag];
             _MainWindow = mainWindow;
 
-            //MessageBox.Show(NewGameVersion + "", "0");
+            GameNameTextBlock.Text = _GamesInfoClass.GameName;
 
             if (_GamesInfoClass.GameReleaseStatus == 0)
             {
@@ -88,7 +88,7 @@ namespace RFUpdater
             if(_GamesInfoClass.GamePCLocation == null)
             {
                 _GamesInfoClass.GamePCLocation = Properties.Settings.Default.SaveFolderPath + _GamesInfoClass.GameName;
-                _GamesInfoClass.GamePCLocation = _GamesInfoClass.GamePCLocation.Replace(' ', '_');
+                _GamesInfoClass.GamePCLocation = _GamesInfoClass.GamePCLocation.Replace(" ", "");
             }
 
             ProgressBar0.Visibility = Visibility.Hidden;
@@ -240,13 +240,22 @@ namespace RFUpdater
             Properties.Settings.Default.Installing = true;
             WebClient WebClient = new WebClient();
 
-            if (Directory.Exists(_GamesInfoClass.GamePCLocation))
+            try
             {
-                Directory.Delete(_GamesInfoClass.GamePCLocation, true);
-                Directory.CreateDirectory(_GamesInfoClass.GamePCLocation);
+                if (Directory.Exists(_GamesInfoClass.GamePCLocation))
+                {
+                    Directory.Delete(_GamesInfoClass.GamePCLocation, true);
+                    Directory.CreateDirectory(_GamesInfoClass.GamePCLocation);
+                }
+                else
+                {
+                    Directory.CreateDirectory(_GamesInfoClass.GamePCLocation);
+                }
             }
-            else
+            catch
             {
+                _GamesInfoClass.GamePCLocation = Properties.Settings.Default.SaveFolderPath + _GamesInfoClass.GameName;
+                _GamesInfoClass.GamePCLocation = _GamesInfoClass.GamePCLocation.Replace(" ", "");
                 Directory.CreateDirectory(_GamesInfoClass.GamePCLocation);
             }
 
@@ -295,6 +304,9 @@ namespace RFUpdater
                 {
                     MessageBox.Show("Complete");
                     GameStatus = 0;
+                    _GamesInfoClass.GameStatus = GameStatus;
+                    _GamesInfoClass.CurrentGameVersion = _GamesInfoClass.NewGameVersion;
+
                     StatusTextBlock.Text = "Status: Installed.";
                     InstallBtn.Content = "Play";
                     InstallBtn.Tag = "Play";
@@ -405,6 +417,9 @@ namespace RFUpdater
         void DeleteGame()
         {
             GameStatus = -2;
+            _GamesInfoClass.GameStatus = GameStatus;
+            _GamesInfoClass.CurrentGameVersion = null;
+
             StatusTextBlock.Text = "Status: Not installed.";
             InstallBtn.Content = "Install";
             InstallBtn.Tag = "Install";
