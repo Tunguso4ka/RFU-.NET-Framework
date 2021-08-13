@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:RFUpdater"
+      xmlns:locale="clr-namespace:RFUpdater.Properties.Lang"
       mc:Ignorable="d"
       d:DesignHeight="350" d:DesignWidth="500"
       Title="GamePage">
@@ -18,7 +19,7 @@
         <StackPanel>
             
             <StackPanel Orientation="Horizontal">
-                <Button Content="Install" Name="InstallBtn" Style="{StaticResource ButtonStylePink}" Click="Buttons_Click" Width="100" Height="30" FontSize="16" Tag="Install"/>
+                <Button Content="{x:Static locale:Lang.Install}" Name="InstallBtn" Style="{StaticResource ButtonStylePink}" Click="Buttons_Click" Width="100" Height="30" FontSize="16" Tag="Install"/>
                 <Button Content="" Name="DeleteBtn" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Click="Buttons_Click" Width="30" Height="30" FontSize="16" Tag="Delete"/>
                 <Separator Margin="5,0"/>
                 <Button Content="" Name="LikeBtn" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" Click="Buttons_Click" Width="30" Height="30" FontSize="16" Tag="Like"/>

@@ -437,5 +437,17 @@ namespace RFUpdater
         {
             notifyIcon.Dispose();
         }
+
+        private void Frame0_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+            if(Frame0.CanGoBack)
+            {
+                BackBtn.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                BackBtn.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }

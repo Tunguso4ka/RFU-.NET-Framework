@@ -7,6 +7,7 @@ using System.IO.Compression;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Media;
+using locale = RFUpdater.Properties.Lang.Lang;
 
 namespace RFUpdater
 {
@@ -78,11 +79,11 @@ namespace RFUpdater
 
             //новая и текущая версия вносятся в текстблоки
             if (GameIsComingSoon == false) {
-                VersionTextBlock.Text = "This version: " + _GamesInfoClass.CurrentGameVersion;
+                VersionTextBlock.Text = locale.VersionThis + _GamesInfoClass.CurrentGameVersion;
             }
             if (!_GamesInfoClass.NewGameVersion.Equals(_GamesInfoClass.CurrentGameVersion))
             {
-                VersionTextBlock.Text += " New version: " + _GamesInfoClass.NewGameVersion;
+                VersionTextBlock.Text += locale.VersionNew + _GamesInfoClass.NewGameVersion;
             }
 
             if(_GamesInfoClass.GamePCLocation == null)
@@ -96,20 +97,20 @@ namespace RFUpdater
 
             if (GameStatus == -2)
             {
-                StatusTextBlock.Text = "Status: Not installed.";
-                InstallBtn.Content = "Install";
+                StatusTextBlock.Text = locale.Status + locale.NotInstalled;
+                InstallBtn.Content = locale.Install;
                 DeleteBtn.Visibility = Visibility.Hidden;
             }
             else if (GameStatus == 1)
             {
-                StatusTextBlock.Text = "Status: Update found.";
-                InstallBtn.Content = "Update";
+                StatusTextBlock.Text = locale.Status + locale.UpdateFound;
+                InstallBtn.Content = locale.Update;
                 DeleteBtn.Visibility = Visibility.Visible;
             }
             else
             {
-                StatusTextBlock.Text = "Status: Installed.";
-                InstallBtn.Content = "Play";
+                StatusTextBlock.Text = locale.Status + locale.Installed;
+                InstallBtn.Content = locale.Play;
                 DeleteBtn.Visibility = Visibility.Visible;
             }
 
@@ -307,8 +308,8 @@ namespace RFUpdater
                     _GamesInfoClass.GameStatus = GameStatus;
                     _GamesInfoClass.CurrentGameVersion = _GamesInfoClass.NewGameVersion;
 
-                    StatusTextBlock.Text = "Status: Installed.";
-                    InstallBtn.Content = "Play";
+                    StatusTextBlock.Text = locale.Status + locale.Installed;
+                    InstallBtn.Content = locale.Play;
                     InstallBtn.Tag = "Play";
 
                     ZipFile.ExtractToDirectory(ZipPath, _GamesInfoClass.GamePCLocation);
@@ -420,8 +421,8 @@ namespace RFUpdater
             _GamesInfoClass.GameStatus = GameStatus;
             _GamesInfoClass.CurrentGameVersion = null;
 
-            StatusTextBlock.Text = "Status: Not installed.";
-            InstallBtn.Content = "Install";
+            StatusTextBlock.Text = locale.Status + locale.NotInstalled;
+            InstallBtn.Content = locale.Install;
             InstallBtn.Tag = "Install";
             DeleteBtn.Visibility = Visibility.Hidden;
 

@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:RFUpdater"
+      xmlns:locale="clr-namespace:RFUpdater.Properties.Lang"
       mc:Ignorable="d" 
       d:DesignHeight="520" d:DesignWidth="500"
       Title="SettingsPage">
@@ -11,45 +12,47 @@
     <ScrollViewer VerticalScrollBarVisibility="Hidden">
         <StackPanel>
             <StackPanel>
-                <TextBlock Text="Language:" Style="{StaticResource GPTextBlockWhite}"/>
-                <RadioButton Content="English" Name="LRB0" Foreground="White"/>
-                <RadioButton Content="Русский" Name="LRB1" Foreground="White"/>
+                <TextBlock Text="{x:Static locale:Lang.Language}" Style="{StaticResource GPTextBlockWhite}"/>
+                <RadioButton Content="{x:Static locale:Lang.English}" Foreground="White" Checked="RadioButton_Checked" Tag="En" Name="LangBtnEn"/>
+                <RadioButton Content="{x:Static locale:Lang.Russian}" Foreground="White" Checked="RadioButton_Checked" Tag="Ru" Name="LangBtnRu"/>
+                <RadioButton Content="{x:Static locale:Lang.Czech}" Foreground="White" Checked="RadioButton_Checked" Tag="Cs" Name="LangBtnCs"/>
+                <RadioButton Content="{x:Static locale:Lang.Ukrainian}" Foreground="White" Checked="RadioButton_Checked" Tag="Uk" Name="LangBtnUk"/>
                 <Separator Margin="0,3"/>
             </StackPanel>
 
             <StackPanel>
-                <CheckBox Content="Autoupdate" Name="CB0" Foreground="White"/>
+                <CheckBox Content="{x:Static locale:Lang.Autoupdate}" Foreground="White" Checked="CheckBox_Checked" Tag="AutoUpdate" Name="AutoUpdateBtn"/>
                 <Separator Margin="0,3"/>
             </StackPanel>
 
             <StackPanel>
-                <TextBlock Text="Select folder:" Style="{StaticResource GPTextBlockWhite}"/>
-                <RadioButton Content="C:\Games\" Name="LRB2" Foreground="White"/>
-                <RadioButton Content="D:\Games\" Name="LRB3" Foreground="White"/>
+                <TextBlock Text="{x:Static locale:Lang.SelectFolder}" Style="{StaticResource GPTextBlockWhite}"/>
+                <RadioButton Content="C:\Games\RFUpdater\" Foreground="White" Checked="RadioButton_Checked" Tag="C" Name="SavePathRBC"/>
+                <RadioButton Content="D:\Games\RFUpdater\" Foreground="White" Checked="RadioButton_Checked" Tag="D" Name="SavePathRBD"/>
                 <StackPanel Orientation="Horizontal">
                     <Button Content="" Style="{StaticResource ButtonStylePink}" Name="OpenFolderBtn" Click="Button_Click" Width="30" HorizontalAlignment="Left" FontFamily="Segoe MDL2 Assets" MouseEnter="OpenFolderBtn_MouseEnter" MouseLeave="OpenFolderBtn_MouseLeave" Tag="OpenFolder"/>
-                    <TextBox Text="" MinWidth="200"/>
+                    <TextBox Text="" MinWidth="200" Name="FolderPathTB"/>
                 </StackPanel>
                 <Separator Margin="0,3"/>
             </StackPanel>
 
             <StackPanel>
-                <TextBlock Text="App theme:" Style="{StaticResource GPTextBlockWhite}"/>
-                <RadioButton Content="Green" Name="LRB4" Foreground="White"/>
-                <RadioButton Content="Pink" Name="LRB5" Foreground="White"/>
-                <RadioButton Content="Blue" Name="LRB6" Foreground="White" IsEnabled="False"/>
+                <TextBlock Text="{x:Static locale:Lang.AppTheme}" Style="{StaticResource GPTextBlockWhite}"/>
+                <RadioButton Content="{x:Static locale:Lang.Green}" Foreground="White" Checked="RadioButton_Checked" Tag="Green" Name="ThemeBtnGr"/>
+                <RadioButton Content="{x:Static locale:Lang.Pink}" Foreground="White" Checked="RadioButton_Checked" Tag="Pink" Name="ThemeBtnPi"/>
+                <RadioButton Content="{x:Static locale:Lang.Blue}" Foreground="White" IsEnabled="False"/>
                 <Separator Margin="0,3"/>
             </StackPanel>
 
             <StackPanel>
-                <CheckBox Content="Start with windows" Name="CB1" Foreground="White"/>
+                <CheckBox Content="{x:Static locale:Lang.StartWithWindows}" Foreground="White" Checked="CheckBox_Checked" Tag="StartWithWindows"/>
                 <Separator Margin="0,3"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal">
-                <Button Content="Log out" Style="{StaticResource ButtonStylePink}" Name="LogOutBtn" Click="Button_Click" Width="100" HorizontalAlignment="Left" Tag="LogOut"/>
-                <Button Content="About" Style="{StaticResource ButtonStylePink}" Name="AboutBtn" Click="Button_Click" Width="100" HorizontalAlignment="Left" Tag="About"/>
-                <Button Content="Save and restart app" Name="SaveBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" Width="auto" HorizontalAlignment="Left" Tag="Save"/>
+                <Button Content="{x:Static locale:Lang.LogOut}" Style="{StaticResource ButtonStylePink}" Name="LogOutBtn" Click="Button_Click" Width="100" HorizontalAlignment="Left" Tag="LogOut"/>
+                <Button Content="{x:Static locale:Lang.About}" Style="{StaticResource ButtonStylePink}" Name="AboutBtn" Click="Button_Click" Width="100" HorizontalAlignment="Left" Tag="About"/>
+                <Button Content="{x:Static locale:Lang.SaveAndRestartApp}" Name="SaveBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" Width="auto" HorizontalAlignment="Left" Tag="Save"/>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>
