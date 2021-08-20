@@ -273,8 +273,5 @@
     <Resource Include="Resources\rfulogo0525.png" />
     <Resource Include="Resources\rfulogo0525ico.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\streetphenomena.mp3" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

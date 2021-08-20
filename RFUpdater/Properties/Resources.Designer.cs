@@ -101,16 +101,6 @@ namespace RFUpdater.Properties {
         }
         
         /// <summary>
-        ///   Поиск локализованного ресурса типа System.Byte[].
-        /// </summary>
-        internal static byte[] streetphenomena {
-            get {
-                object obj = ResourceManager.GetObject("streetphenomena", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Ищет локализованную строку, похожую на .
         /// </summary>
         internal static string String {
