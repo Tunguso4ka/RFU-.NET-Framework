@@ -28,6 +28,14 @@ namespace RFUpdater
                     BtnTag = Convert.ToString(0) 
                 }
                 );
+            ListWithNewsData.Add(
+                new NewsList()
+                {
+                    NewsText = "Random Fights - is a first and main RFUpdater game. \n I love this game and i love u too! \n Have a nice day!",
+                    IconSource = new Uri("https://drive.google.com/uc?id=1n63bM-yK1YLPSEyR3ehhq3GfSt2Tj1S7", UriKind.RelativeOrAbsolute),
+                    BtnTag = Convert.ToString(0)
+                }
+                );
             NewsItemsControl.ItemsSource = ListWithNewsData;
             //https://drive.google.com/file/d/1snwcZsH8Mu4nucVT4PqWI18F9UenlhdL/view?usp=sharing
         }

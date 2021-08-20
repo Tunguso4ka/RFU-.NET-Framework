@@ -11,6 +11,8 @@ using System.Diagnostics;
 using System.Windows.Controls;
 using System.Threading;
 using Microsoft.Win32;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
 
 namespace RFUpdater
 {
@@ -263,20 +265,11 @@ namespace RFUpdater
             if((string)ClickedButton.Tag == "Settings")
             {
                 Frame0.Navigate(ASettingsPage);
-                LibraryBtn.Background = Brushes.Transparent;
-                SettingsBtn.Background = new SolidColorBrush(Color.FromRgb(36, 00, 70));
-                StoreBtn.Background = Brushes.Transparent;
-                MenuBtn.Background = Brushes.Transparent;
             }
             else if ((string)ClickedButton.Tag == "Library")
             {
                 ALibraryPage.Check();
                 Frame0.Navigate(ALibraryPage);
-
-                LibraryBtn.Background = new SolidColorBrush(Color.FromRgb(36,00,70));
-                SettingsBtn.Background = Brushes.Transparent;
-                StoreBtn.Background = Brushes.Transparent;
-                MenuBtn.Background = Brushes.Transparent;
             }
             else if ((string)ClickedButton.Tag == "Close")
             {
@@ -304,19 +297,13 @@ namespace RFUpdater
                 }
                 else
                 {
-                    this.WindowStyle = WindowStyle.SingleBorderWindow;
                     this.WindowState = WindowState.Maximized;
                     ClickedButton.Content = "";
-                    this.WindowStyle = WindowStyle.None;
                 }
             }
             else if ((string)ClickedButton.Tag == "Menu")
             {
                 Frame0.Navigate(AStartPage);
-                LibraryBtn.Background = Brushes.Transparent;
-                SettingsBtn.Background = Brushes.Transparent;
-                StoreBtn.Background = Brushes.Transparent;
-                MenuBtn.Background = new SolidColorBrush(Color.FromRgb(36, 00, 70));
             }
             else if ((string)ClickedButton.Tag == "User")
             {
@@ -342,7 +329,10 @@ namespace RFUpdater
         {
 
             notifyIcon = new Forms.NotifyIcon(new Container());
+            /*
             Forms.ContextMenuStrip _ContextMenuStrip = new Forms.ContextMenuStrip();
+
+            _ContextMenuStrip.BackColor = System.Drawing.Color.FromArgb(125, 36, 0, 70);
 
             Forms.ToolStripMenuItem _StripMenuItemAppName = new Forms.ToolStripMenuItem();
 
@@ -356,13 +346,20 @@ namespace RFUpdater
                     new Forms.ToolStripMenuItem("Exit", null, new EventHandler(ExitClicked))
                 }
             );
+            */
+            Forms.ContextMenu context_menu = new Forms.ContextMenu();
 
-            _StripMenuItemAppName.Text = "RFUpdater";
-            _StripMenuItemAppName.Enabled = false;
-            _StripMenuItemAppName.Image = Properties.Resources.rfulogo0525;
+            context_menu.MenuItems.AddRange(
+                new Forms.MenuItem[] 
+                { 
+                    new Forms.MenuItem("Main page", new EventHandler(StartPageClicked)),
+                    new Forms.MenuItem("Store", new EventHandler(LibraryPageClicked)),
+                    new Forms.MenuItem("Library", new EventHandler(LibraryPageClicked)), 
+                    new Forms.MenuItem("Close", new EventHandler(ExitClicked)) 
+                });
 
             notifyIcon.Icon = Properties.Resources.rfulogo0525ico;
-            notifyIcon.ContextMenuStrip = _ContextMenuStrip;
+            notifyIcon.ContextMenu = context_menu;
             notifyIcon.Text = "RFUpdater";
             notifyIcon.Visible = true;
             notifyIcon.MouseDown += new Forms.MouseEventHandler(NotifyIconClicked);
@@ -373,10 +370,8 @@ namespace RFUpdater
         {
             if (this.WindowState == WindowState.Maximized)
             {
-                this.WindowStyle = WindowStyle.SingleBorderWindow;
                 this.WindowState = WindowState.Maximized;
                 MaximizeBtn.Content = "";
-                this.WindowStyle = WindowStyle.None;
             }
         }
 
@@ -448,6 +443,104 @@ namespace RFUpdater
             {
                 BackBtn.Visibility = Visibility.Collapsed;
             }
+        }
+
+        //
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            ((HwndSource)PresentationSource.FromVisual(this)).AddHook(HookProc);
+        }
+
+        public static IntPtr HookProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == WM_GETMINMAXINFO)
+            {
+                // We need to tell the system what our size should be when maximized. Otherwise it will
+                // cover the whole screen, including the task bar.
+                MINMAXINFO mmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
+
+                // Adjust the maximized size and position to fit the work area of the correct monitor
+                IntPtr monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+
+                if (monitor != IntPtr.Zero)
+                {
+                    MONITORINFO monitorInfo = new MONITORINFO();
+                    monitorInfo.cbSize = Marshal.SizeOf(typeof(MONITORINFO));
+                    GetMonitorInfo(monitor, ref monitorInfo);
+                    RECT rcWorkArea = monitorInfo.rcWork;
+                    RECT rcMonitorArea = monitorInfo.rcMonitor;
+                    mmi.ptMaxPosition.X = Math.Abs(rcWorkArea.Left - rcMonitorArea.Left);
+                    mmi.ptMaxPosition.Y = Math.Abs(rcWorkArea.Top - rcMonitorArea.Top);
+                    mmi.ptMaxSize.X = Math.Abs(rcWorkArea.Right - rcWorkArea.Left);
+                    mmi.ptMaxSize.Y = Math.Abs(rcWorkArea.Bottom - rcWorkArea.Top);
+                }
+
+                Marshal.StructureToPtr(mmi, lParam, true);
+            }
+
+            return IntPtr.Zero;
+        }
+
+        private const int WM_GETMINMAXINFO = 0x0024;
+
+        private const uint MONITOR_DEFAULTTONEAREST = 0x00000002;
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr MonitorFromWindow(IntPtr handle, uint flags);
+
+        [DllImport("user32.dll")]
+        private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+
+        [Serializable]
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+
+            public RECT(int left, int top, int right, int bottom)
+            {
+                this.Left = left;
+                this.Top = top;
+                this.Right = right;
+                this.Bottom = bottom;
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MONITORINFO
+        {
+            public int cbSize;
+            public RECT rcMonitor;
+            public RECT rcWork;
+            public uint dwFlags;
+        }
+
+        [Serializable]
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int X;
+            public int Y;
+
+            public POINT(int x, int y)
+            {
+                this.X = x;
+                this.Y = y;
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MINMAXINFO
+        {
+            public POINT ptReserved;
+            public POINT ptMaxSize;
+            public POINT ptMaxPosition;
+            public POINT ptMinTrackSize;
+            public POINT ptMaxTrackSize;
         }
     }
 }

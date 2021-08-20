@@ -15,9 +15,9 @@
                     <DataTemplate>
                         <Button Style="{StaticResource ButtonStyleWhiteWithBackground}" Height="Auto" Width="Auto" Margin="5" Click="Button_Click" Tag="{Binding BtnTag}">
                             <Grid>
-                                <StackPanel Margin="5" Orientation="Horizontal">
+                                <StackPanel Margin="15" Orientation="Horizontal">
                                     <Grid>
-                                        <Image Height="70" Width="70" Name="NewsImage" Source="{Binding IconSource}"/>
+                                        <Image Height="128" Width="128" Name="NewsImage" Source="{Binding IconSource}"/>
                                     </Grid>
                                     <TextBlock Text="{Binding NewsText}" Foreground="White" Name="NewsTextBox"/>
                                 </StackPanel>

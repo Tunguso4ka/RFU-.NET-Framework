@@ -255,7 +255,7 @@ namespace RFUpdater
             }
             catch
             {
-                _GamesInfoClass.GamePCLocation = Properties.Settings.Default.SaveFolderPath + _GamesInfoClass.GameName;
+                _GamesInfoClass.GamePCLocation = Properties.Settings.Default.SaveFolderPath + @"\" + _GamesInfoClass.GameName;
                 _GamesInfoClass.GamePCLocation = _GamesInfoClass.GamePCLocation.Replace(" ", "");
                 Directory.CreateDirectory(_GamesInfoClass.GamePCLocation);
             }

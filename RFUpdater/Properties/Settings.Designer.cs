@@ -73,7 +73,7 @@ namespace RFUpdater.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Games\\RFUpdater\\")]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Games\\RFUpdater")]
         public string SaveFolderPath {
             get {
                 return ((string)(this["SaveFolderPath"]));

@@ -4,15 +4,15 @@
              xmlns:local="clr-namespace:RFUpdater"
              StartupUri="LoadingWindow.xaml">
     <Application.Resources>
-        <Color x:Key="ButtonBackgroundColor" R="58" G="38" B="98" A="125"/>
+        <Color x:Key="ButtonBackgroundColor" R="36" G="0" B="70" A="125"/>
         <SolidColorBrush x:Key="AButtonBackgroundColor" Color="{StaticResource ButtonBackgroundColor}"/>
 
         <Style TargetType="Button" x:Key="ButtonStylePink">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="5"/>
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Width" Value="50"/>
             <Setter Property="Foreground" Value="#FFFFFF"/>
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="FontFamily" Value="/RFUpdater;component/Materials/#Poppins"/>
@@ -20,7 +20,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}">
+                        <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="5" BorderBrush="{TemplateBinding Background}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -30,7 +30,6 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Foreground" Value="#FFFFFF"/>
                     <Setter Property="Background" Value="#240046"/>
-                    <Setter Property="FontFamily" Value="/RFUpdater;component/Materials/#Poppins ExtraBold"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -39,15 +38,15 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="5"/>
-            <Setter Property="Height" Value="25"/>
-            <Setter Property="Width" Value="35"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Width" Value="50"/>
             <Setter Property="Foreground" Value="#61d6c8"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}">
+                        <Border Background="{TemplateBinding Background}" BorderThickness="5" CornerRadius="5" BorderBrush="{TemplateBinding Background}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -72,7 +71,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}">
+                        <Border Background="{TemplateBinding Background}" BorderThickness="5" CornerRadius="5" BorderBrush="{TemplateBinding Background}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>

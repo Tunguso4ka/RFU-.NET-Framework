@@ -38,7 +38,7 @@
 
             <StackPanel>
                 <TextBlock Text="{x:Static locale:Lang.AppTheme}" Style="{StaticResource GPTextBlockWhite}"/>
-                <RadioButton Content="{x:Static locale:Lang.Green}" Foreground="White" Checked="RadioButton_Checked" Tag="Green" Name="ThemeBtnGr"/>
+                <RadioButton Content="{x:Static locale:Lang.Green}" Foreground="White" Checked="RadioButton_Checked" Tag="Green" Name="ThemeBtnGr" IsEnabled="False"/>
                 <RadioButton Content="{x:Static locale:Lang.Pink}" Foreground="White" Checked="RadioButton_Checked" Tag="Pink" Name="ThemeBtnPi"/>
                 <RadioButton Content="{x:Static locale:Lang.Blue}" Foreground="White" IsEnabled="False"/>
                 <Separator Margin="0,3"/>
@@ -50,9 +50,9 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal">
-                <Button Content="{x:Static locale:Lang.LogOut}" Style="{StaticResource ButtonStylePink}" Name="LogOutBtn" Click="Button_Click" Width="100" HorizontalAlignment="Left" Tag="LogOut"/>
-                <Button Content="{x:Static locale:Lang.About}" Style="{StaticResource ButtonStylePink}" Name="AboutBtn" Click="Button_Click" Width="100" HorizontalAlignment="Left" Tag="About"/>
-                <Button Content="{x:Static locale:Lang.SaveAndRestartApp}" Name="SaveBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" Width="auto" HorizontalAlignment="Left" Tag="Save"/>
+                <Button Content="{x:Static locale:Lang.LogOut}" Style="{StaticResource ButtonStylePink}" Name="LogOutBtn" Click="Button_Click" Width="auto" MinWidth="100" HorizontalAlignment="Left" Tag="LogOut"/>
+                <Button Content="{x:Static locale:Lang.About}" Style="{StaticResource ButtonStylePink}" Name="AboutBtn" Click="Button_Click" Width="auto" MinWidth="100" HorizontalAlignment="Left" Tag="About"/>
+                <Button Content="{x:Static locale:Lang.SaveAndRestartApp}" Name="SaveBtn" Click="Button_Click" Style="{StaticResource ButtonStylePink}" Width="auto" MinWidth="200" HorizontalAlignment="Left" Tag="Save"/>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>
