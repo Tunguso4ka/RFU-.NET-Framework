@@ -48,7 +48,7 @@ namespace RFUpdater
                 case "cs-CZ":
                     LangBtnCs.IsChecked = true;
                     break;
-                case "uk-UK":
+                case "uk-UA":
                     LangBtnUk.IsChecked = true;
                     break;
             }
@@ -154,7 +154,7 @@ namespace RFUpdater
                     Properties.Settings.Default.UpdaterLanguage = "cs-CZ";
                     break;
                 case "Uk":
-                    Properties.Settings.Default.UpdaterLanguage = "uk-UK";
+                    Properties.Settings.Default.UpdaterLanguage = "uk-UA";
                     break;
                 case "Green":
                     ThemeNum = 0;
