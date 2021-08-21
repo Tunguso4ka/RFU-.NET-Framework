@@ -9,16 +9,27 @@
         ResizeMode="NoResize"
         mc:Ignorable="d"
         MouseLeftButtonDown="Window_MouseLeftButtonDown"
-        Title="About RFUpdater" Height="200" Width="300">
+        Title="About RFUpdater" Height="250" Width="300">
+    <Window.Background>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FF240046" Offset="0"/>
+            <GradientStop Color="#FF3C096C" Offset="0.25"/>
+            <GradientStop Color="#FF5A189A" Offset="0.5"/>
+            <GradientStop Color="#FF7B2CBF" Offset="0.75"/>
+            <GradientStop Color="#FF9D4EDD" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
 
-    <Border BorderBrush="#10002b" BorderThickness="3">
-        <Grid Background="#10002b">
+    <Border BorderThickness="5">
+        <Grid>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
-                <TextBlock Style="{StaticResource GPTextBlockWhite}" Text="RFU" VerticalAlignment="Center" FontSize="24" Name="AppNameTextBlock"/>
-                <TextBlock Style="{StaticResource GPTextBlockWhite}" Text="by Kira Kosova" VerticalAlignment="Center" FontSize="8"/>
+                <TextBlock Style="{StaticResource GPTextBlockWhite}" Text="RFU" VerticalAlignment="Center" FontFamily="/RFUpdater;component/Materials/#Poppins" FontSize="24" Name="AppNameTextBlock"/>
+                <TextBlock Style="{StaticResource GPTextBlockWhite}" Text="by Kira Kosova" VerticalAlignment="Center" FontSize="8" FontFamily="/RFUpdater;component/Materials/#Poppins"/>
             </StackPanel>
-            <Button Content="" x:Name="CloseBtn" Click="CloseBtn_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" ToolTipService.ToolTip="Close" VerticalAlignment="Top" HorizontalAlignment="Right"/>
-            <TextBox Name="AboutTextBox" Foreground="White" Background="#240046" IsReadOnly="True" BorderBrush="Transparent" Margin="0,30,0,0"/>
+            <Border HorizontalAlignment="Right" Background="#FF3C096C" BorderBrush="#FF3C096C" BorderThickness="0" CornerRadius="5" VerticalAlignment="Top">
+                <Button Content="&#xE8BB;" x:Name="CloseBtn" Click="CloseBtn_Click" Style="{StaticResource ButtonStylePink}" FontFamily="Segoe MDL2 Assets" ToolTipService.ToolTip="Close"/>
+            </Border>
+            <TextBox Name="AboutTextBox" Foreground="White" IsReadOnly="True" BorderBrush="Transparent" Margin="0,40,0,0"/>
         </Grid>
     </Border>
 </Window>

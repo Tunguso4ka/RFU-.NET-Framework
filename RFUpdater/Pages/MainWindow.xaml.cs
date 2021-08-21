@@ -40,6 +40,7 @@ namespace RFUpdater
         public SearchPage ASearchPage;
         public UserPage AUserPage;
         public LoginPage ALoginPage;
+        public StorePage AStorePage;
 
         public GamesInfoClass[] GamesInfoClassList = new GamesInfoClass[99];
 
@@ -85,17 +86,76 @@ namespace RFUpdater
             ASearchPage = new SearchPage();
             AUserPage = new UserPage();
             ALoginPage = new LoginPage();
+            AStorePage = new StorePage(this);
         }
         void Checks()
         {
 
             StringsSet();
-            SettingsSearch();
+            //SettingsSearch();
             UpdatesChecking();
             BetaCheck();
             AuthorizCheck();
             ThemeSet();
             Pages();
+            GamesCheck();
+        }
+
+        public void GamesCheck()
+        {
+            GamesInfoClass gamesInfoClass;
+
+            string GamesAppData = Properties.Settings.Default.AppDataPath + @"Games\";
+            string[] GamesDirectoriesPaths = Directory.GetDirectories(GamesAppData);
+
+            GamesInfoClassList = new GamesInfoClass[GamesDirectoriesPaths.Length];
+
+            int i = 0;
+            while (i < GamesDirectoriesPaths.Length)
+            {
+
+                //BinaryReaderOutput = BinaryReader.ReadString().Split(';');
+                DirectoryInfo directoryInfo = new DirectoryInfo(GamesDirectoriesPaths[i]);
+
+                gamesInfoClass = new GamesInfoClass();
+                gamesInfoClass.GameName = directoryInfo.Name;
+
+                string GameInfoPath = GamesAppData + gamesInfoClass.GameName + @"\gameinfo.dat";
+
+                if(File.Exists(GameInfoPath))
+                {
+                    BinaryReader BinaryReader = new BinaryReader(File.OpenRead(GameInfoPath));
+
+                    string GameNameFromFile = BinaryReader.ReadString();
+
+                    gamesInfoClass.GamePictureUri = BinaryReader.ReadString();
+
+                    gamesInfoClass.InfoDriveLocationUri = BinaryReader.ReadString();
+                    gamesInfoClass.GameDriveLocationUri = BinaryReader.ReadString();
+                    gamesInfoClass.GamePCLocation = BinaryReader.ReadString();
+
+                    try { gamesInfoClass.CurrentGameVersion = new Version(BinaryReader.ReadString()); }
+                    catch { gamesInfoClass.CurrentGameVersion = null; }
+
+                    try { gamesInfoClass.NewGameVersion = new Version(BinaryReader.ReadString()); }
+                    catch { gamesInfoClass.NewGameVersion = null; }
+
+                    try { gamesInfoClass.GameStatus = BinaryReader.ReadInt32(); }
+                    catch { gamesInfoClass.GameStatus = 0; }
+
+                    try { gamesInfoClass.GameReleaseStatus = BinaryReader.ReadInt32(); }
+                    catch { gamesInfoClass.GameReleaseStatus = 0; }
+
+                    try { gamesInfoClass.Tag = BinaryReader.ReadInt32(); }
+                    catch { gamesInfoClass.Tag = i; }
+
+                    GamesInfoClassList[i] = gamesInfoClass;
+
+                    //MessageBox.Show(GameNameFromFile, i + " ");
+                }
+                //MessageBox.Show(GameInfoPath, i + " ");
+                i++;
+            }
         }
 
         void SettingsSearch()
@@ -268,7 +328,7 @@ namespace RFUpdater
             }
             else if ((string)ClickedButton.Tag == "Library")
             {
-                ALibraryPage.Check();
+                //ALibraryPage.Check();
                 Frame0.Navigate(ALibraryPage);
             }
             else if ((string)ClickedButton.Tag == "Close")
@@ -322,6 +382,10 @@ namespace RFUpdater
                 {
                     Frame0.GoBack();
                 }
+            }
+            else if ((string)ClickedButton.Tag == "Store")
+            {
+                Frame0.Navigate(AStorePage);
             }
         }
 
@@ -403,20 +467,27 @@ namespace RFUpdater
         {
             if (e.Button == Forms.MouseButtons.Left)
             {
-                Frame0.Content = AStartPage;
+                Frame0.Navigate(AStartPage);
                 this.WindowState = WindowState.Normal;
                 this.ShowInTaskbar = true;
             }
         }
         private void StartPageClicked(object sender, EventArgs e)
         {
-            Frame0.Content = AStartPage;
+            Frame0.Navigate(AStartPage);
             this.WindowState = WindowState.Normal;
             this.ShowInTaskbar = true;
         }
         private void LibraryPageClicked(object sender, EventArgs e)
         {
-            Frame0.Content = ALibraryPage;
+            Frame0.Navigate(ALibraryPage);
+            this.WindowState = WindowState.Normal;
+            this.ShowInTaskbar = true;
+        }
+
+        private void StorePageClicked(object sender, EventArgs e)
+        {
+            Frame0.Navigate(AStorePage);
             this.WindowState = WindowState.Normal;
             this.ShowInTaskbar = true;
         }

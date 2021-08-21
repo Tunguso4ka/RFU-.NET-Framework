@@ -9,9 +9,9 @@ using System.Windows.Media;
 namespace RFUpdater
 {
     /// <summary>
-    /// Interaction logic for LibraryPage.xaml
+    /// Логика взаимодействия для StorePage.xaml
     /// </summary>
-    public partial class LibraryPage : Page
+    public partial class StorePage : Page
     {
         WebClient webClient = new WebClient();
         public GamePage _GamePage;
@@ -21,69 +21,96 @@ namespace RFUpdater
 
         //lists massives
         public List<GameData> ListWithGameData = new List<GameData>();
+        GamesInfoClass[] gamesInfoClasses;
 
         //ints
         public int _Tag;
 
-        Uri ImageSourceUri = new Uri("https://drive.google.com/uc?id=1pbvzQhhskJR8Vi-y-rC9AJ4iI1uylJ5g", UriKind.RelativeOrAbsolute); //RFU logo - https://drive.google.com/uc?id=1vm1sKGFaGSlJWCSaqyiMdR2z62FUTewn https://drive.google.com/file/d/1vm1sKGFaGSlJWCSaqyiMdR2z62FUTewn/view?usp=sharing gamelist - https://drive.google.com/uc?id=1QzOoLrQKW48salKmltEPDAis2Rd_GFz9 https://drive.google.com/uc?id=1Ia1E7q7Hpz-zihtBMxI8jDgGk5tXEk-X
-        public LibraryPage(MainWindow mainWindow)
+        Uri ImageSourceUri = new Uri("https://drive.google.com/uc?id=1pbvzQhhskJR8Vi-y-rC9AJ4iI1uylJ5g", UriKind.RelativeOrAbsolute);
+
+        public StorePage(MainWindow mainWindow)
         {
             InitializeComponent();
-            //gamesInfoClasses = mainWindow.GamesInfoClassList;
             _MainWindow = mainWindow;
+            //gamesInfoClasses = _MainWindow.GamesInfoClassList;
+            gamesInfoClasses = new GamesInfoClass[99];
             Check();
         }
 
         public void Check()
         {
-            //GoogleDiscGamesCheck();
-            _MainWindow.GamesCheck();
-            AddGamesToControl();
-        }
-
-        void AddGamesToControl()
-        {
-            try
-            {
-                int LineNum = 0;
-                while (LineNum != _MainWindow.GamesInfoClassList.Length)
-                {
-                    string ReleaseStatusText = "";
-
-                    if (_MainWindow.GamesInfoClassList[LineNum].GameReleaseStatus == 0)
-                    {
-                        ReleaseStatusText = "Soon";
-                    }
-                    else if (_MainWindow.GamesInfoClassList[LineNum].GameReleaseStatus == 1)
-                    {
-                        ReleaseStatusText = "Beta";
-                    }
-                    else
-                    {
-                        ReleaseStatusText = "";
-                    }
-
-                    ListWithGameData.Add(
-                    new GameData()
-                    {
-                        AGameName = _MainWindow.GamesInfoClassList[LineNum].GameName,
-                        IconSource = new Uri(_MainWindow.GamesInfoClassList[LineNum].GamePictureUri, UriKind.RelativeOrAbsolute),
-                        BtnTag = Convert.ToString(_MainWindow.GamesInfoClassList[LineNum].Tag),
-                        GameReleaseStatus = ReleaseStatusText
-                    });
-
-                    LineNum++;
-                }
-                GameItemsControl.ItemsSource = ListWithGameData;
-            }
-            catch
-            {
-                AddTestGame();
-            }
+            GoogleDiscGamesCheck();
         }
 
         async void GoogleDiscGamesCheck()
         {
+            ListWithGameData.Clear();
+
+            string GameListFilePath = Properties.Settings.Default.AppDataPath + "gamelist.txt";
+
+            if (File.Exists(GameListFilePath))
+            {
+                File.Delete(GameListFilePath);
+            }
+
+            webClient.DownloadFile(GameListFileUri, GameListFilePath);
+
+            using (StreamReader StreamReader = new StreamReader(GameListFilePath))
+            {
+                int LineNum = 0;
+                string[] LineList;
+                string line;
+                string _GameReleaseStatus = "";
+
+                while ((line = await StreamReader.ReadLineAsync()) != null)
+                {
+                    //MessageBox.Show(line, LineNum + " ");
+                    if (gamesInfoClasses[LineNum] == null)
+                    {
+                        gamesInfoClasses[LineNum] = new GamesInfoClass();
+                    }
+
+                    LineList = line.Split('}');
+                    if (gamesInfoClasses[LineNum].GameName == null)
+                    {
+                        gamesInfoClasses[LineNum].GameName = LineList[0];
+                    }
+                    if (gamesInfoClasses[LineNum].GameName != LineList[0])
+                    {
+                        gamesInfoClasses[LineNum].GameName = LineList[0];
+                    }
+
+                    gamesInfoClasses[LineNum].GamePictureUri = LineList[1];
+                    gamesInfoClasses[LineNum].InfoDriveLocationUri = LineList[2];
+                    gamesInfoClasses[LineNum].GameReleaseStatus = Convert.ToInt32(LineList[3]);
+
+                    switch (Convert.ToInt32(LineList[3]))
+                    {
+                        case 0:
+                            _GameReleaseStatus = "Soon";
+                            break;
+                        case 1:
+                            _GameReleaseStatus = "Beta";
+                            break;
+                        case 2:
+                            _GameReleaseStatus = "";
+                            break;
+                    }
+
+                    ListWithGameData.Add(new GameData()
+                    {
+                        AGameName = gamesInfoClasses[LineNum].GameName,
+                        IconSource = new Uri(LineList[1], UriKind.RelativeOrAbsolute),
+                        BtnTag = Convert.ToString(LineNum),
+                        GameReleaseStatus = _GameReleaseStatus
+                    });
+                    LineNum++;
+                }
+                StreamReader.Dispose();
+                GameItemsControl.ItemsSource = ListWithGameData;
+            }
+            File.Delete(GameListFilePath);
+
             /*
             try
             {
@@ -120,7 +147,7 @@ namespace RFUpdater
                         }
 
                         LineList = line.Split('}');
-                        if(gamesInfoClasses[LineNum].GameName == null)
+                        if (gamesInfoClasses[LineNum].GameName == null)
                         {
                             gamesInfoClasses[LineNum].GameName = LineList[0];
                         }
@@ -133,7 +160,7 @@ namespace RFUpdater
                         gamesInfoClasses[LineNum].InfoDriveLocationUri = LineList[2];
                         gamesInfoClasses[LineNum].GameReleaseStatus = Convert.ToInt32(LineList[3]);
 
-                        switch(Convert.ToInt32(LineList[3]))
+                        switch (Convert.ToInt32(LineList[3]))
                         {
                             case 0:
                                 _GameReleaseStatus = "Soon";
@@ -146,7 +173,12 @@ namespace RFUpdater
                                 break;
                         }
 
-                        ListWithGameData.Add(new GameData() { AGameName = gamesInfoClasses[LineNum].GameName, IconSource = new Uri(LineList[1], UriKind.RelativeOrAbsolute), BtnTag = Convert.ToString(gamesInfoClasses[LineNum].Tag), GameReleaseStatus = _GameReleaseStatus });
+                        ListWithGameData.Add(new GameData() 
+                        { 
+                            AGameName = gamesInfoClasses[LineNum].GameName, 
+                            IconSource = new Uri(LineList[1], UriKind.RelativeOrAbsolute), 
+                            BtnTag = Convert.ToString(gamesInfoClasses[LineNum].Tag), 
+                            GameReleaseStatus = _GameReleaseStatus });
                         LineNum++;
                     }
                     StreamReader.Dispose();
@@ -167,37 +199,40 @@ namespace RFUpdater
             Button PressedButton = (Button)sender;
             _Tag = Convert.ToInt32((string)PressedButton.Tag);
 
-            GamesInfoClass _GamesInfoClass = _MainWindow.GamesInfoClassList[_Tag];
+            GamesInfoClass _GamesInfoClass = gamesInfoClasses[_Tag];
 
-            string GameInfoPath = Properties.Settings.Default.AppDataPath + "GameInfo.txt";
-
-            try
+            if(_GamesInfoClass.GameReleaseStatus != 0)
             {
-                if(_GamesInfoClass != null)
-                {
-                    webClient.DownloadFile(new Uri(_GamesInfoClass.InfoDriveLocationUri, UriKind.RelativeOrAbsolute), GameInfoPath);
+                string GameInfoPath = Properties.Settings.Default.AppDataPath + "GameInfo.txt";
 
-                    using (StreamReader StreamReader = new StreamReader(GameInfoPath))
+                try
+                {
+                    if (_GamesInfoClass != null)
                     {
-                        _MainWindow.GamesInfoClassList[_Tag].NewGameVersion = new Version(StreamReader.ReadLine());
-                        _MainWindow.GamesInfoClassList[_Tag].GameDriveLocationUri = StreamReader.ReadLine();
-                        StreamReader.Dispose();
-                    }
-                    File.Delete(GameInfoPath);
-                }
-                else
-                {
-                    _MainWindow.GamesInfoClassList[_Tag].NewGameVersion = new Version("0.0");
-                    _MainWindow.GamesInfoClassList[_Tag].GameDriveLocationUri = "";
-                }
-            }
-            catch
-            {
-                //f
-            }
+                        webClient.DownloadFile(new Uri(_GamesInfoClass.InfoDriveLocationUri, UriKind.RelativeOrAbsolute), GameInfoPath);
 
-            _GamePage = new GamePage(_Tag, _MainWindow, _MainWindow.GamesInfoClassList[_Tag]);
-            ((MainWindow)Window.GetWindow(this)).Frame0.Navigate(_GamePage);
+                        using (StreamReader StreamReader = new StreamReader(GameInfoPath))
+                        {
+                            gamesInfoClasses[_Tag].NewGameVersion = new Version(StreamReader.ReadLine());
+                            gamesInfoClasses[_Tag].GameDriveLocationUri = StreamReader.ReadLine();
+                            StreamReader.Dispose();
+                        }
+                        File.Delete(GameInfoPath);
+                    }
+                    else
+                    {
+                        gamesInfoClasses[_Tag].NewGameVersion = new Version("0.0");
+                        gamesInfoClasses[_Tag].GameDriveLocationUri = "";
+                    }
+                }
+                catch
+                {
+                    //f
+                }
+
+                _GamePage = new GamePage(_Tag, _MainWindow, _GamesInfoClass);
+                _MainWindow.Frame0.Navigate(_GamePage);
+            }
 
         }
 
@@ -228,5 +263,14 @@ namespace RFUpdater
             }
 
         }
+    }
+
+    public class GameData
+    {
+        public string AGameName { get; set; }
+        public Uri IconSource { get; set; }
+        public string BtnTag { get; set; }
+        public string GameReleaseStatus { get; set; }
+        public Brush ReleaseStatusTextBlockBrush { get; set; }
     }
 }

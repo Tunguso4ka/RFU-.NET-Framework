@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:RFUpdater"
       xmlns:locale="clr-namespace:RFUpdater.Properties.Lang"
       mc:Ignorable="d"
-      d:DesignHeight="350" d:DesignWidth="500"
+      d:DesignHeight="720" d:DesignWidth="1280"
       Title="GamePage">
 
     <StackPanel>
@@ -27,7 +27,7 @@
                 <Button x:Name="GameInfoHideBtn" Content="" Style="{StaticResource ButtonStylePink}" Width="30" FontFamily="Segoe MDL2 Assets" Click="Buttons_Click" Height="30" FontSize="16" Tag="GameInfo"/>
             </StackPanel>
             
-            <StackPanel Visibility="Collapsed" Name="GameInfoStackPanel" Background="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+            <StackPanel Visibility="Visible" Name="GameInfoStackPanel" Background="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
                 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="This version: 0.0.0.0" Name="VersionTextBlock" Style="{StaticResource GPTextBlockWhite}"/>
@@ -37,6 +37,11 @@
                     <TextBlock Text="Status: Not installed" Name="StatusTextBlock" Style="{StaticResource GPTextBlockWhite}"/>
                     <Separator Margin="5,0"/>
                     <TextBlock Text="Downloading speed: " Name="DownSpeedTextBlock" Style="{StaticResource GPTextBlockWhite}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Exe files:" Name="exeFilesTextBlock" Style="{StaticResource GPTextBlockWhite}"/>
+                    <ComboBox Width="200" Name="exeFilesComboBox" SelectionChanged="exeFilesComboBox_SelectionChanged"/>
                 </StackPanel>
                 
             </StackPanel>
